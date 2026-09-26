@@ -18,7 +18,7 @@
 ```
 You are helping me build ProvenPath (hackathon, 2 days, 4 people). Repo: https://github.com/shauryaaojha/ProvenPath-Guidewire. READ FIRST: 12_BUILD_PLAN_2_DAYS.md (master plan — follow exactly, esp. §2, §3, §5), team/DHRITI.md, 07_GOSU.md, 02_PRODUCT_MODEL.md, 10_PROVENPATH_MAPPING.md, rules/README.md, backend/contracts.
 
-STACK: backend in GOSU on JDK 11 (Gradle multi-module), frontend Next.js, real Guidewire PolicyCenter 10, all via Docker, NO Python. Gosu syntax only (.gs, uses, var x : T, function, construct(), blocks \ x -> ...). Build/test via `bash backend/gradlew-docker.sh test`.
+STACK: backend in GOSU on JDK 11 (Gradle multi-module), frontend Next.js, real Guidewire PolicyCenter 10, NO Python. Docker is optional: setup is in docs/SETUP.md (JDK 11 + backend/gradlew + embedded PostgreSQL). Gosu syntax only (.gs, uses, var x : T, function, construct(), blocks \ x -> ...). Build/test via `cd backend && ./gradlew test` (JDK 11).
 
 I own TRACK C — AI layer + rule content. Principle: the LLM only PROPOSES, never decides compliance. My module :planner depends ONLY on :contracts: it receives VerifyPort and EventPort and passes the Verdict through unchanged. It must never `uses provenpath.core.*`.
 
@@ -39,7 +39,7 @@ Rules: branch track-c/*, merge to main at checkpoints (D1 10:30, 13:30, 18:00, 2
 ```
 
 ## ✅ Ready to start: how your code plugs into the backend (on `main`)
-The backend (`backend/app`) is built and tested. Run it with `cp .env.example .env` (set `PROVENPATH_GATE_SECRET`), then `docker compose up --build` and `bash scripts/smoke.sh`.
+The backend (`backend/app`) is built and tested. Run it with `cp .env.example .env` (set `PROVENPATH_GATE_SECRET`), then `scripts/run-local.cmd` (or `bash scripts/run-local.sh`; no Docker needed, see `docs/SETUP.md`) and `bash scripts/smoke.sh`.
 
 **Planner (`:planner` module):**
 - Implement `provenpath.contracts.PlannerPort` in class **`provenpath.planner.Planner`** with a **no-arg constructor**:
@@ -57,4 +57,4 @@ The backend (`backend/app`) is built and tested. Run it with `cp .env.example .e
 
 **Rules:** there are **23** rules (the plan's "22" was an arithmetic slip: 3+7+4+5+3 plus the GRD rule). Any rule edit changes the `rulesetHash`, and runs verified under the old hash can't be deployed. That's intended.
 
-**Eval corpus:** `eval/corpus/*.json`. Run it with `bash backend/gradlew-docker.sh :eval:run`; the result shows up at `GET /api/v1/metrics`.
+**Eval corpus:** `eval/corpus/*.json`. Run it with `cd backend && ./gradlew :eval:run`; the result shows up at `GET /api/v1/metrics`.

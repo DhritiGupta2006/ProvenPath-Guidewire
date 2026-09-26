@@ -20,6 +20,7 @@ uses org.junit.jupiter.api.Assertions
 uses org.junit.jupiter.api.Assumptions
 uses org.junit.jupiter.api.BeforeAll
 uses org.junit.jupiter.api.Test
+uses io.zonky.test.db.postgres.embedded.EmbeddedPostgres
 uses provenpath.app.db.Db
 uses provenpath.contracts.Event
 uses provenpath.contracts.Json
@@ -33,6 +34,7 @@ class AppIntegrationTest {
 
   static final var PROMPT = "Cyber insurance for Indian startups, up to ₹50L coverage"
   static var _db : Db
+  static var _pg : EmbeddedPostgres
   static var _s : Services
   static var _server : Server
   static var _port : int
@@ -41,8 +43,18 @@ class AppIntegrationTest {
   @BeforeAll
   static function setUp() {
     var url = System.getenv("PROVENPATH_TEST_DB_URL")
-    Assumptions.assumeTrue(url != null and !url.Empty, "PROVENPATH_TEST_DB_URL not set; run backend/test-with-db.sh")
-    _db = new Db(url, System.getenv("PROVENPATH_TEST_DB_USER") ?: "provenpath", System.getenv("PROVENPATH_TEST_DB_PASSWORD") ?: "provenpath")
+    if (url != null and !url.Empty) {
+      _db = new Db(url, System.getenv("PROVENPATH_TEST_DB_USER") ?: "provenpath", System.getenv("PROVENPATH_TEST_DB_PASSWORD") ?: "provenpath")
+    } else {
+      // No DB given: start a throwaway embedded PostgreSQL (no Docker needed). Postgres refuses to run as root,
+      // so inside a root container this is skipped; use backend/test-with-db.sh there.
+      try {
+        _pg = EmbeddedPostgres.start()
+      } catch (e : Exception) {
+        Assumptions.abort("embedded PostgreSQL unavailable (" + e.Message + "); run backend/test-with-db.sh")
+      }
+      _db = new Db(_pg.getJdbcUrl("postgres", "postgres"), "postgres", "postgres")
+    }
     _db.resetForTests()
     _s = new Services(new Config(), _db, null, new TestPackageBuilder())
     Seeder.seed(_s.Repo, _s.Loader)
@@ -57,6 +69,7 @@ class AppIntegrationTest {
   static function tearDown() {
     _server?.stop()
     _db?.close()
+    _pg?.close()
   }
 
   // ------------------------------------------------------------------ helpers

@@ -50,7 +50,7 @@ docker run --rm \
   gradle test --no-daemon
 ```
 
-`gradlew-docker.sh test` skips the `:app` integration tests (they need Postgres). The full suite runs against a throwaway PostgreSQL 16 container:
+**Without Docker (the default, same as the VM):** `./gradlew test` / `gradlew.bat test` with JDK 11. The `:app` integration tests start their own embedded PostgreSQL. With Docker, `gradlew-docker.sh test` skips them (Postgres refuses to run as root in the container), and this runs them against a PostgreSQL container instead:
 
 ```bash
 bash backend/test-with-db.sh              # core 34 + app 12 + eval 1 tests
@@ -75,8 +75,8 @@ Javalin 5.6 on JDK 11. It's a single fat jar (`gradle :app:fatJar` → `app/buil
 **Deploy gate:** a package is built and queued only if the execution is approved, the approved review targets a PASSED run with a gate token, the stored proposal still hashes to the verified `proposalHash`, the ruleset is unchanged, and the HMAC token verifies. A BLOCKED run can never produce a package.
 
 **Run modes:**
-- Laptops: `docker compose up --build` from the repo root (copy `.env.example` to `.env` first). Smoke test: `bash scripts/smoke.sh`.
-- Guidewire VM (no Docker, no admin): `java -jar provenpath-app.jar` with `DB_MODE=embedded`. The jar starts its own PostgreSQL 16; data lives in `EMBEDDED_PG_DIR` (default `../.provenpath-pgdata`), port `EMBEDDED_PG_PORT` (default 5433). Verified natively on Windows with Temurin 11.0.32 as a non-admin user; the database is UTF8, so ₹ is safe.
+- Laptops: `scripts/run-local.cmd` / `bash scripts/run-local.sh` (JDK 11, embedded PostgreSQL); stop with `scripts/stop-local.*`. Optional: `docker compose up --build`. Smoke test: `bash scripts/smoke.sh`. Full setup: `docs/SETUP.md`.
+- Guidewire VM (no Docker, no admin): `java -jar provenpath-app.jar` with `DB_MODE=embedded`. The jar starts its own PostgreSQL 16; data lives in `EMBEDDED_PG_DIR` (default `../.provenpath-pgdata`), port `EMBEDDED_PG_PORT` (default 0 = any free port). Verified natively on Windows with Temurin 11.0.32 as a non-admin user; the database is UTF8, so ₹ is safe.
 
 | Env var | Default | |
 |---|---|---|

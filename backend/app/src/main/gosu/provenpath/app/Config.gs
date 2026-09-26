@@ -29,7 +29,7 @@ class Config {
     // external = connect to DB_URL (Docker on laptops); embedded = start a private PostgreSQL from the jar (Guidewire VM)
     _dbMode = env("DB_MODE", "external").toLowerCase()
     _embeddedPgDir = new File(env("EMBEDDED_PG_DIR", "../.provenpath-pgdata")).AbsolutePath
-    _embeddedPgPort = Integer.parseInt(env("EMBEDDED_PG_PORT", "5433"))
+    _embeddedPgPort = Integer.parseInt(env("EMBEDDED_PG_PORT", "0"))  // 0 = any free port (the DB is private to the backend)
     _port = Integer.parseInt(env("PORT", "8080"))
     _dbUrl = env("DB_URL", "jdbc:postgresql://localhost:5432/provenpath")
     _dbUser = env("DB_USER", "provenpath")

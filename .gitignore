@@ -19,3 +19,6 @@ node_modules/
 .next/
 *.log
 vmreport.md
+
+# Embedded PostgreSQL data (scripts/run-local.*)
+.provenpath-pgdata/

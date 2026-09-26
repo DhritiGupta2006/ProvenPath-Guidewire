@@ -16,7 +16,7 @@
 ```
 You are helping me build ProvenPath (hackathon, 2 days, 4 people). Repo: https://github.com/shauryaaojha/ProvenPath-Guidewire. READ FIRST: 12_BUILD_PLAN_2_DAYS.md (master plan — follow exactly), team/VAISHNAVI.md, docs/events.md, backend/contracts (data shapes), fixtures/events_demo_run.jsonl.
 
-STACK: frontend Next.js (App Router) + TypeScript + Tailwind + React Flow (@xyflow/react), in Docker (node:20-alpine). Backend = Gosu service at http://localhost:8080 (SSE at /api/v1/executions/{id}/stream). Deployment target = a REAL Guidewire PolicyCenter 10 on a Guidewire cloud VM (no mock); the ProvenPath agent on the VM pulls approved packages and reports pc.pulled/write/restart/ready/verified/failed. Build against fixtures FIRST so I never wait on the backend.
+STACK: frontend Next.js (App Router) + TypeScript + Tailwind + React Flow (@xyflow/react). Plain `npm run dev` (Docker optional; the final demo runs natively on the Guidewire VM with `next start`). Backend = Gosu service at http://localhost:8080 (SSE at /api/v1/executions/{id}/stream). Deployment target = a REAL Guidewire PolicyCenter 10 on a Guidewire cloud VM (no mock); the ProvenPath agent on the VM pulls approved packages and reports pc.pulled/write/restart/ready/verified/failed. Build against fixtures FIRST so I never wait on the backend.
 
 I own TRACK D — Mission Control UI in web/ (do not touch web/app/api/mcp — Dhriti owns it).
 

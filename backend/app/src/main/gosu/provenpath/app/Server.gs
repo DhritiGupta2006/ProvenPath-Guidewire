@@ -58,6 +58,18 @@ class Server {
       json(ctx, 200, VerifyService.map({"status" -> "ok", "rulesetHash" -> _s.Verify.RulesetHash, "llmMode" -> _s.LlmMode,
           "planner" -> (_s.PlannerStatus), "packageBuilder" -> (_s.BuilderStatus)}))
     })
+    // Clean stop for scripts/stop-local.* (runs shutdown hooks, so the embedded PostgreSQL stops too). Localhost only.
+    app.post("/api/v1/admin/shutdown", \ ctx -> {
+      var remote = ctx.req().RemoteAddr?.replace("[", "")?.replace("]", "")
+      if (remote == null or !java.net.InetAddress.getByName(remote).LoopbackAddress) {
+        throw new ApiException(403, "forbidden", "shutdown is only allowed from localhost")
+      }
+      json(ctx, 202, VerifyService.map({"status" -> "stopping"}))
+      new Thread(\ -> {
+        Thread.sleep(300)
+        System.exit(0)
+      }).start()
+    })
     app.get("/api/v1/users", \ ctx -> { json(ctx, 200, _s.Repo.users()) })
     app.get("/api/v1/rules", \ ctx -> { json(ctx, 200, _s.Query.rules()) })
     app.get("/api/v1/metrics", \ ctx -> {

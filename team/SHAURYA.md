@@ -14,7 +14,7 @@
 > **Status:** agy is building the first cut of `:contracts`, `:core`, `:eval`, the rules seed and the fixtures on branch `track-a/core`. Your first job on Day 1 is to review it, get it green, and merge it.
 
 ## Checklist
-- [ ] **D1 09:00–10:30:** agy's Track A output builds and tests green in Docker. Freeze contracts. Push to `main` (**CP0**)
+- [ ] **D1 09:00–10:30:** agy's Track A output builds and tests green. Freeze contracts. Push to `main` (**CP0**)
 - [ ] **D1 10:30–13:30:** `:app`: Javalin, Flyway `V1__init.sql` (8 tables + append-only trigger), DAO, seed loader
 - [ ] **D1 14:00–18:00:** event bus + SSE (subscribe-then-replay), REST routes, `VerifyService` emitting `verify.node`
 - [ ] **D1 18:00 CP2:** fixture run → gate → SSE → UI turns red on CYB-RNG-002
@@ -46,5 +46,5 @@ I own TRACK A: verification core + backend app. Principle: the LLM never produce
 - Keep :planner and :pcexport depending ONLY on :contracts (compile-time boundary).
 - Config ONLY from env vars with localhost defaults (DB_URL, PROVENPATH_RULES_DIR, GEMINI_API_KEY, PROVENPATH_GATE_SECRET, PC_AGENT_KEY): the same jar runs in Docker on laptops AND natively on the Guidewire VM (Temurin 11, portable Postgres, no Docker). Build a runnable fat jar for :app.
 
-Rules: merge to main at checkpoints (D1 10:30, 13:30, 18:00, 23:00; D2 12:30, 15:00 freeze). main must always run `docker compose up --build`. No AI co-author lines in commits. The repo is PUBLIC — never commit Guidewire/PolicyCenter files, jars or images. Rule values are curated/illustrative, not legal advice.
+Rules: merge to main at checkpoints (D1 10:30, 13:30, 18:00, 23:00; D2 12:30, 15:00 freeze). main must always pass `backend/gradlew test` and `scripts/run-local` + `scripts/smoke.sh` (see docs/SETUP.md; Docker optional). No AI co-author lines in commits. The repo is PUBLIC — never commit Guidewire/PolicyCenter files, jars or images. Rule values are curated/illustrative, not legal advice.
 ```

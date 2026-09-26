@@ -3,3 +3,6 @@
 *.yaml text eol=lf
 *.json text eol=lf
 *.jsonl text eol=lf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+backend/gradlew text eol=lf
