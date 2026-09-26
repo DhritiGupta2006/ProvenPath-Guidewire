@@ -22,3 +22,6 @@ vmreport.md
 
 # Embedded PostgreSQL data (scripts/run-local.*)
 .provenpath-pgdata/
+
+# Gradle wrapper jar is needed to build without an installed Gradle
+!backend/gradle/wrapper/gradle-wrapper.jar
