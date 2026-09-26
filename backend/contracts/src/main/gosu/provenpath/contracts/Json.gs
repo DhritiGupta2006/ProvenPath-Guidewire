@@ -37,6 +37,8 @@ class Json {
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+    // Map keys too: JSONB and HashMaps reorder keys, and the hash must not depend on that.
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
     mapper.setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
     mapper.addMixIn(Object, GosuObjectMixIn)
     return mapper

@@ -8,7 +8,7 @@ pluginManagement {
 rootProject.name = 'provenpath'
 
 // Track A modules (Verification Core)
-include 'contracts', 'core', 'eval'
+include 'contracts', 'core', 'eval', 'app'
 
 // Future modules — teammates will add these later:
 // include 'app'      // Shaurya: Javalin API, Flyway, SSE

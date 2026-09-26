@@ -24,6 +24,8 @@ subprojects {
     
     test {
         useJUnitPlatform()
+        // Gosu generates inner proxy/block classes (Foo$ProxyFor_..., Foo$block_1_) next to test classes; they are not tests.
+        exclude '**/*$*'
     }
     
     sourceSets {
@@ -67,5 +69,48 @@ project(':eval') {
         implementation project(':core')
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
         implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    }
+}
+
+project(':app') {
+    apply plugin: 'application'
+
+    application {
+        mainClass = 'provenpath.app.Main'
+    }
+
+    dependencies {
+        implementation project(':contracts')
+        implementation project(':core')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+        implementation 'io.javalin:javalin:5.6.3'
+        implementation 'org.slf4j:slf4j-simple:2.0.13'
+        implementation 'org.postgresql:postgresql:42.7.3'
+        implementation 'com.zaxxer:HikariCP:5.1.0'
+        implementation 'org.flywaydb:flyway-core:9.22.3'
+    }
+
+    test {
+        environment 'PROVENPATH_TEST', 'true'
+        environment 'PROVENPATH_RULES_DIR', "${rootDir}/../rules"
+        environment 'PROVENPATH_FIXTURES_DIR', "${rootDir}/../fixtures"
+        environment 'PROVENPATH_EVAL_DIR', "${rootDir}/../eval"
+        environment 'VERIFY_NODE_DELAY_MS', '0'
+        environment 'AGENT_LONG_POLL_MS', '1500'
+        environment 'PC_AGENT_KEY', 'test-agent-key'
+        environment 'PROVENPATH_GATE_SECRET', System.getenv('PROVENPATH_GATE_SECRET') ?: 'test-secret'
+        testLogging { events 'failed'; exceptionFormat 'full' }
+    }
+
+    // Single runnable jar (used by the Docker image and by vm\start-all.cmd on the Guidewire VM).
+    tasks.register('fatJar', Jar) {
+        archiveFileName = 'provenpath-app.jar'
+        manifest { attributes 'Main-Class': 'provenpath.app.Main' }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from sourceSets.main.output
+        dependsOn configurations.runtimeClasspath
+        from { configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } }
+        exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
     }
 }

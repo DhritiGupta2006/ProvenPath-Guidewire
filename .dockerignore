@@ -1,0 +1,8 @@
+.git
+**/build
+**/.gradle
+**/node_modules
+**/.next
+.env
+.env.*
+vmreport.md

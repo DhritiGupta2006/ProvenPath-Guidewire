@@ -1,0 +1,45 @@
+# Dev mode (laptops). On the Guidewire VM the same services run natively: see vm/ and docs/policycenter.md.
+#   cp .env.example .env   # then set PROVENPATH_GATE_SECRET (and GEMINI_API_KEY for LLM_MODE=live)
+#   docker compose up --build
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: provenpath
+      POSTGRES_USER: provenpath
+      POSTGRES_PASSWORD: provenpath
+    ports: ["${DB_PORT:-5432}:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U provenpath -d provenpath"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/provenpath
+      DB_USER: provenpath
+      DB_PASSWORD: provenpath
+      PROVENPATH_GATE_SECRET: ${PROVENPATH_GATE_SECRET:?set PROVENPATH_GATE_SECRET in .env (see .env.example)}
+      PC_AGENT_KEY: ${PC_AGENT_KEY:-}
+      LLM_MODE: ${LLM_MODE:-fixture}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      VERIFY_NODE_DELAY_MS: ${VERIFY_NODE_DELAY_MS:-150}
+    ports: ["${BACKEND_PORT:-8080}:8080"]
+    # Mounted read-only so rule edits, new fixtures and fresh eval metrics show up without rebuilding.
+    volumes:
+      - ./rules:/app/rules:ro
+      - ./fixtures:/app/fixtures:ro
+      - ./eval:/app/eval:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # web: Mission Control (Track D) — add here with build: ./web and NEXT_PUBLIC_API_URL=http://localhost:8080
+
+volumes:
+  pgdata:

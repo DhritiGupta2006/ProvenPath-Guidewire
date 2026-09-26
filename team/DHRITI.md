@@ -37,3 +37,24 @@ I own TRACK C — AI layer + rule content. Principle: the LLM only PROPOSES, nev
 FALLBACK: if the Gosu Gemini planner is stuck by D2 12:30, move the planner into a Next.js route handler in TypeScript (@google/genai), NOT Python.
 Rules: branch track-c/*, merge to main at checkpoints (D1 10:30, 13:30, 18:00, 23:00; D2 12:30, 15:00 freeze). No AI co-author lines. Never commit API keys. Repo is PUBLIC — no Guidewire files.
 ```
+
+## ✅ Ready to start: how your code plugs into the backend (on `main`)
+The backend (`backend/app`) is built and tested. Run it with `cp .env.example .env` (set `PROVENPATH_GATE_SECRET`), then `docker compose up --build` and `bash scripts/smoke.sh`.
+
+**Planner (`:planner` module):**
+- Implement `provenpath.contracts.PlannerPort` in class **`provenpath.planner.Planner`** with a **no-arg constructor**:
+  `function run(executionId : String, prompt : String, verifier : VerifyPort, events : EventPort) : Verdict`
+- Return the **last Verdict exactly as `verifier.verify(...)` returned it**. The backend checks that the verdict's run belongs to this execution, then moves the execution to `review_pending` (PASSED) or `verified_fail` (BLOCKED).
+- `verifier.verify(proposal)` persists the proposal and emits `proposal.created`, `verify.started`, `verify.node` ×N and `gate.blocked` / `gate.passed` itself. **Don't emit those.** You emit only `planner.step`, `tool.called`, `tool.result` and `planner.repair` (see `docs/events.md`, and `backend/app/.../planner/FixturePlanner.gs` for the exact payload shapes to copy).
+- Set `proposal.ExecutionId = executionId`, and `Iteration` = 1, 2, … per repair.
+- Add `include 'planner'` to `backend/settings.gradle`, give `:planner` a dependency on **`:contracts` only**, and add `runtimeOnly project(':planner')` to `:app`. The backend loads it by class name when `LLM_MODE=live` (it never compiles against it). `GEMINI_API_KEY` comes from `.env`.
+- Until your planner works, `LLM_MODE=fixture` keeps the whole demo running.
+
+**MCP route:** proxy each tool to `POST {backend}/api/v1/tools/{propose_product|add_coverage|verify_compliance|deploy_product}` with a JSON body.
+- `propose_product` accepts Proposal fields (plus an optional `prompt`) and returns `executionId`.
+- The other tools need `executionId`.
+- `add_coverage` takes `clause` or `clauses` (Clause JSON).
+
+**Rules:** there are **23** rules (the plan's "22" was an arithmetic slip: 3+7+4+5+3 plus the GRD rule). Any rule edit changes the `rulesetHash`, and runs verified under the old hash can't be deployed. That's intended.
+
+**Eval corpus:** `eval/corpus/*.json`. Run it with `bash backend/gradlew-docker.sh :eval:run`; the result shows up at `GET /api/v1/metrics`.
