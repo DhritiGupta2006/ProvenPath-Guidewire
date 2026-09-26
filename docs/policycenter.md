@@ -59,3 +59,15 @@ agent tested against a local folder                            ├─ (PostgreSQ
 - **Sessions:** processes run in console windows as `Student`. Disconnect the remote session instead of signing out; `start-all.cmd` is safe to re-run.
 - **Fallback:** the agent also watches `C:\provenpath\inbox` for package zips.
 - **Demo screen:** the VM desktop, with Mission Control (`localhost:3000`) and PolicyCenter (`localhost:8180/pc`) side by side.
+
+## Backend dry run on the VM (Day 0): ✅ passed
+Temurin 11.0.32 (in-session `JAVA_HOME` only; PC's Corretto untouched), embedded PostgreSQL 16.15, no Docker, no admin.
+| Step | Result |
+|---|---|
+| `backend\gradlew.bat test` | **47/47 pass** (core 34, app 12, eval 1). First Gradle download + build: ~2 min |
+| `:app:fatJar` | 22 s, 135.7 MB |
+| `scripts\run-local.cmd --no-build` | Ready in **14.7 s**, embedded DB on a free port |
+| `bash scripts/smoke.sh` (Git Bash at `C:\Guidewire\Apps\Git\bin\bash.exe`) | Blocked on CYB-RNG-002 → repaired → passed → review → replay hash match → approved → deploy 503 (expected until `:pcexport`) → 0/6 false-pass |
+| `scripts\stop-local.cmd` | Clean stop; no leftover `postgres.exe` or `java.exe` |
+
+**Not yet exercised on the VM:** starting/stopping PolicyCenter (boot and restart times still TODO), the SMCyber package, the PC agent, ProductModelAPI, and the web UI.

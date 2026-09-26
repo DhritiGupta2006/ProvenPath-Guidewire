@@ -17,7 +17,7 @@ The same setup runs on your laptop and on the Guidewire VM: **JDK 11 + the Gradl
 | Stop cleanly (also stops the embedded PostgreSQL) | `scripts\stop-local.cmd` | `bash scripts/stop-local.sh` |
 | Tests (core + app integration + eval; the app tests start their own embedded PostgreSQL) | `cd backend` then `gradlew.bat test` | `cd backend && ./gradlew test` |
 | Eval metrics → `eval/metrics.json` | `gradlew.bat :eval:run` | `./gradlew :eval:run` |
-| Smoke test of a running backend | (Git Bash) `bash scripts/smoke.sh` | `bash scripts/smoke.sh` |
+| Smoke test of a running backend | Git Bash: `bash scripts/smoke.sh` (on the VM: `C:\Guidewire\Apps\Git\bin\bash.exe scripts/smoke.sh`) | `bash scripts/smoke.sh` |
 
 - The backend listens on `PORT`, or `BACKEND_PORT` from `.env` (default 8080). If something else already uses 8080 (it did on one laptop: an Apache service), set `BACKEND_PORT=18080` in `.env`.
 - The embedded database lives in `.provenpath-pgdata/` (gitignored) on a random free private port. After a crash or force-kill, the next start stops the orphaned Postgres automatically.
