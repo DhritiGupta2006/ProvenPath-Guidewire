@@ -1,0 +1,20 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# NEVER commit licensed Guidewire material (repo is public)
+pc-home/
+GW10/
+**/modules/configuration/generated/
+*.jar
+*.war
+*.gwp.bak
+
+# Build output
+build/
+.gradle/
+out/
+node_modules/
+.next/
+*.log

@@ -1,8 +1,17 @@
-# ProvenPath — 2-Day Build Plan (4 people) · Gosu + Next.js + Docker
+# ProvenPath — 2-Day Build Plan (4 people) · Gosu + real PolicyCenter + Next.js + Docker
 
-> **Goal at the end of Day 2:** A PM types *"Cyber insurance for Indian startups, up to ₹50L coverage"* and Mission Control shows the full run live. The LLM proposes a config. The rule-graph, written in Gosu, **blocks** it and names the rule, the layer and the citation. The planner revises the config, which then passes all 5 layers. A named reviewer approves it, and the mocked PolicyCenter, a separate Gosu container, receives a Guidewire-shaped payload. Metrics show **0% false-pass** on a labelled test corpus, and pressing replay re-verifies the config with an identical verdict hash. **Everything runs with `docker compose up --build`.**
+> **Goal at the end of Day 2:** A PM types *"Cyber insurance for Indian startups, up to ₹50L coverage"* into Mission Control.
+> 1. The LLM proposes a config.
+> 2. The Gosu rule-graph **blocks** it, naming the rule, the layer and the citation.
+> 3. The planner revises the config, and it passes all 5 layers.
+> 4. A named reviewer approves it.
+> 5. ProvenPath **deploys the SMCyber product into a real Guidewire PolicyCenter 10**: it generates product-model files, writes them into the PC configuration module, restarts PC, and confirms the result via PC's `ProductModelAPI`.
+> 6. We open PolicyCenter, start a **New Submission → SMCyber**, and the verified coverages are there.
+> 7. We type an over-limit value directly in PolicyCenter, and **ProvenPath's Gosu gate running inside PC rejects it**, citing the rule code.
 >
-> Sources this plan is built from: PRD v2 · `PROVENPATH_PROJECT_PLAN.md` · `PROVENPATH_DATABASE_ARCHITECTURE.md` · `01_OVERVIEW.md` · `02_PRODUCT_MODEL.md` · `04_RULES_AND_UNDERWRITING.md` · `07_GOSU.md` · `09_INTEGRATIONS.md` · `10_PROVENPATH_MAPPING.md`.
+> Metrics show **0% false-pass** on a labelled test corpus, and replay re-verifies the config with an identical hash. Everything runs through Docker.
+>
+> Sources this plan is built from: PRD v2 · `PROVENPATH_PROJECT_PLAN.md` · `PROVENPATH_DATABASE_ARCHITECTURE.md` · `01_OVERVIEW.md` · `02_PRODUCT_MODEL.md` · `04_RULES_AND_UNDERWRITING.md` · `05_RATING.md` · `07_GOSU.md` · `08_WORKFLOWS.md` · `09_INTEGRATIONS.md` · `10_PROVENPATH_MAPPING.md` · `11_FILE_REFERENCE.md`.
 
 ---
 
@@ -10,263 +19,243 @@
 
 | Question | Decision | Why |
 |---|---|---|
-| Product line | **Cyber Insurance for SMEs** (`SMCyber` / `SMCyberLine`) | Every doc already assumes it |
-| Main backend | **Gosu on JDK 11**, Gradle multi-module (`gradle-gosu-plugin`), running standalone outside PolicyCenter | This is PolicyCenter's own language (`07_GOSU.md`). The pitch line: *"our gate is Gosu, so it ports into PC as an `IPreUpdateHandler` plugin"* |
-| Gosu version | Try **1.14.x first**, which matches PC 10's Gosu 1.14.26 (`01_OVERVIEW.md`). If the build spike fails, use **1.18.x** (latest on Maven Central) | Same dialect as PolicyCenter |
-| Java libs (all JDK 11-compatible; Gosu calls Java libs directly) | **Javalin 5.6.x** (HTTP + built-in SSE) · Jackson · PostgreSQL JDBC + HikariCP · **Flyway 9.x** (10.x needs Java 17) · **JGraphT** (the DAG) · SnakeYAML · `java.net.http.HttpClient` (Gemini) · JUnit 5 | Nothing exotic, and no Java 17 dependencies |
-| AI planner | **Gosu** (`:planner` module): Gemini REST + function calling, `temperature=0`, `LLM_MODE=live\|fixture` | It's HTTP + JSON, so it doesn't need Python. **If it gets stuck, move it to TypeScript in Next.js, not Python**, so the stack stays at 2 languages |
-| MCP server | **Next.js route** `web/app/api/mcp` using `@modelcontextprotocol/sdk` (TypeScript). The tools proxy to the Gosu REST API | The Java MCP SDK needs Java 17, which conflicts with Gosu's JDK 11 |
-| **Python** | **Removed entirely.** The eval harness is a Gosu program too | After Next.js there is nothing left for Python to do |
-| Frontend | **Next.js (App Router) + TypeScript + Tailwind + React Flow (`@xyflow/react`)** | The node graph comes built in, and the same app hosts the MCP route |
-| DB | **PostgreSQL 16** container, migrations via Flyway plain SQL | Matches the DB architecture doc |
-| Everything | **Docker Compose**: `db`, `backend`, `policycenter-mock`, `web` | One command to run the demo on any laptop |
-| Layers | All 5 (TYPE, RANGE, CONSISTENCY, RULE-MATCH, SOURCE) plus a grounding check | |
-| MCP tools | 4: `propose_product`, `add_coverage` (also handles exclusions), `verify_compliance`, `deploy_product`. `configure_rating` is folded into `propose_product` | Follows the PRD's §9 fallback |
-| Auth | None. A reviewer dropdown with 2 seeded named users | PRD §5 non-goal |
+| Product line | **Cyber Insurance for SMEs** (`SMCyber`) | Every doc already assumes it |
+| PolicyCenter | **Real PolicyCenter 10** (10.2.1, `01_OVERVIEW.md`). **No mock.** | We're building the real product |
+| PC install | A teammate's **licensed local install** (`C:\GW10\PolicyCenter`), H2 dev DB, `gwb runServer` / `gradlew runServer`, port **8180**, context `/pc`, login `su`/`gw` | Matches the docs |
+| PC in Docker | `policycenter` compose service (`eclipse-temurin:11-jdk`). The install is **bind-mounted** from `${PC_HOME}` and **never copied into an image**. Compose profile `pc` | "Everything via Docker" without breaking the Guidewire licence |
+| If PC won't run in Docker | Run PC **natively** on the teammate's machine; ProvenPath talks to `host.docker.internal:8180`. This is still real PC, not a mock | Guidewire doesn't officially support PC dev in Docker |
+| **Licence / public repo** | The GitHub repo is **PUBLIC**. **Never commit Guidewire files, the PC install, PC jars or a PC image.** Commit only files **we author** (our SMCyber overlay, our Gosu plugin). `.gitignore` covers `pc-home/`, `*.jar`, `build/` | Legal. Non-negotiable |
+| SMCyber in PC | **Phase 1 (must):** a new **Product** `SMCyber` with **new Cyber coverage patterns on an existing commercial line** (General Liability `GLLine`). This needs no new entities or PCF screens. An `AvailabilityScript` restricts the patterns to `ProductCode == "SMCyber"`. **Phase 2 (stretch):** a dedicated `SMCyberLine` via Advanced Product Designer, if the licence has it | A new line of business needs entities, PCF, line methods and a rating engine, which don't fit in 2 days. New coverage patterns on an existing line is the standard config path (`02_PRODUCT_MODEL.md`) |
+| Deploy mechanism | ProvenPath writes an **overlay** (product XML, coverage-pattern XMLs with `<CovTerms>`, display keys, `provenpath-manifest.json`) into `${PC_HOME}/modules/configuration` → triggers a PC restart → polls `/pc` → confirms via **ProductModelAPI (SOAP)** | Product-model changes need a rebuild and restart. There is no runtime import |
+| Gate inside PC | A Gosu **validation rule / `IValidationPlugin`** in PC (`gsrc/provenpath/pc/`) re-checks SMCyber coverage term values against the signed manifest and rejects out-of-range values with the rule code. **Stretch:** a startup check that refuses SMCyber if the overlay files don't match the manifest hash | This is the `IValidationPlugin` / `IPreUpdateHandler` story from `09_INTEGRATIONS.md`, running in real PC |
+| Main backend | **Gosu on JDK 11**, Gradle multi-module (`gradle-gosu-plugin`), standalone, Gosu **1.14.x** (same as PC 10's 1.14.26). If that fails, 1.18.x | PC's own language. Core classes stay compatible with PC's Gosu |
+| Java libs (JDK 11) | Javalin 5.6.x (HTTP + SSE) · Jackson · PostgreSQL JDBC + HikariCP · Flyway 9.x · JGraphT · SnakeYAML · `java.net.http` (Gemini + PC SOAP) · JUnit 5 | |
+| AI planner | **Gosu** `:planner` (Gemini REST, `temperature=0`, `LLM_MODE=live\|fixture`). If stuck, move it to TypeScript in Next.js, not Python | |
+| MCP server | **Next.js** `web/app/api/mcp` with the TypeScript SDK. The tools proxy to the Gosu API | The Java MCP SDK needs Java 17 |
+| Python | **None** | |
+| Frontend | **Next.js (App Router) + TypeScript + Tailwind + React Flow** | |
+| DB | ProvenPath: **PostgreSQL 16** (Flyway). PolicyCenter keeps its own H2 dev DB | |
+| Compose services | `db`, `backend`, `web`, `policycenter` (profile `pc`) | Teammates without a PC install can run everything except `policycenter` |
 
-### ⚠️ One PRD contradiction to resolve: all-or-nothing vs. "remaining clauses flow through"
+### ⚠️ PRD contradiction: all-or-nothing vs. "remaining clauses flow through"
 
-§7 invariant 4 says any failure blocks the whole config. We keep that and change the demo:
+We keep invariant 4:
 
-**Run #1 is BLOCKED** (ransomware sublimit too high), so nothing reaches PC. The planner receives the named failure and re-proposes. **Run #2 passes**, goes to reviewer approval, and deploys.
+1. **Run #1 is BLOCKED.** Nothing reaches PC.
+2. **Run #2 passes**, gets approved, and deploys to PC.
 
-### ⚠️ Biggest technical risk: Gosu tooling. It is handled by a spike in the first hour.
+### ⚠️ Top risks, owned from hour 1
 
-Standalone Gosu is less common than Java, and AI coding agents write it less fluently. By **10:30 on Day 1**, Chinmay must have a Gosu Javalin "hello" endpoint running in Docker next to Postgres and Next.js. If it isn't working, fall back in this order:
-
-1. Switch the Gosu version to 1.18.x.
-2. Build with Maven (`gosu-maven-compiler`) instead of Gradle.
-3. At **12:30**, escalate to Shaurya for a team decision.
-
-Nobody waits on this: everyone else writes code against the contracts and fixtures in the meantime.
+| Risk | Owner | Mitigation |
+|---|---|---|
+| PC doesn't boot in Docker | Chinmay | Spike by 12:00 Day 1. Otherwise run PC natively + `host.docker.internal` |
+| PC restart takes minutes, which is awkward live | Chinmay | Demo: approve → deploy starts the restart → talk through metrics and replay (about 2 min) → open PC. Keep a pre-deployed PC as the backup |
+| New cyber coverages break quoting (no rating) | Chinmay | Phase 1 demo stops at "coverages visible + PC-side gate rejects an over-limit value". Rating the cyber coverages (rate book import + GL rating extension) is stretch |
+| Standalone Gosu tooling | Shaurya | Handled early: agy is already building Track A in Gosu (branch `track-a/core`) |
+| Guidewire files leak to the public repo | Everyone | `.gitignore` + review every PR diff for `modules/`, `.jar`, Guidewire headers |
 
 ---
 
 ## 1. Team tracks
 
+**Per-person briefs (prompts + checklists):** `team/SHAURYA.md` · `team/CHINMAY.md` · `team/DHRITI.md` · `team/VAISHNAVI.md`
+
 | Track | Owner | Owns |
 |---|---|---|
-| **A — Verification Core (Gosu)** + tech lead | **Shaurya** | `:contracts`, `:core` (rule loader, JGraphT DAG, evaluator, 5 layers + grounding, gate, gate token), `:eval` harness, fixtures |
-| **B — Platform, Docker & PolicyCenter mock (Gosu)** | **Chinmay** | Gosu/Gradle/Docker spike, `docker-compose.yml`, `:app` (Javalin API, Flyway, event log, SSE, review workflow, replay), `:pcmock` container (PreUpdateHandler + Guidewire XML adapter) |
-| **C — AI Layer (Gosu planner + TS MCP) & Rule Content** | **Dhriti** | `rules/` (22 rules + sources YAML), `:planner` (Gemini, repair loop), shared tool schemas, `web/app/api/mcp` MCP server, eval corpus |
-| **D — Mission Control (Next.js)** + pitch deck | **Vaishnavi** | `web/`: live trace, DAG graph, tools panel, blocked card, reviewer panel, deploy/provenance, metrics, replay, tamper/bypass, disclaimer |
+| **A — Verification Core + Backend App (Gosu)**, tech lead | **Shaurya** | `:contracts`, `:core` (engine, 5 layers + grounding, gate, token), `:eval`; **`:app`** (Javalin API, Flyway DB, append-only event log, SSE, review workflow, replay, provenance, metrics) |
+| **B — Real PolicyCenter Integration (Gosu)** | **Chinmay** *(or whoever has the PC install)* | PC in Docker/native, hand-built SMCyber v0 in PC, `:pcexport` (Proposal → PC overlay + signed manifest), `:pcdeploy` (write → restart → ProductModelAPI verify), PC-side Gosu validation gate, SubmissionAPI, docker-compose |
+| **C — AI Layer & Rule Content** | **Dhriti** | `rules/` (22 rules + sources), `:planner` (Gemini, repair loop), `shared/tools`, Next.js MCP route, eval corpus |
+| **D — Mission Control (Next.js)** + pitch deck | **Vaishnavi** | `web/`: live trace, DAG, tools, blocked card, reviewer, **PC deploy progress + "Open in PolicyCenter"**, provenance, metrics, replay, tamper |
 
-> The owners are suggestions. Swap them freely, but keep one owner per track and **one owner for `:contracts`** (Shaurya).
+> ⚠️ **Whoever has the licensed PolicyCenter 10 install owns Track B.** If that's not Chinmay, swap tracks.
 
 ---
 
 ## 2. Architecture and repo layout
 
 ```
-docker compose up --build
- ├─ db                 postgres:16                                  :5432
- ├─ backend            Gosu/JDK11  (:app + :core + :planner)        :8080
- ├─ policycenter-mock  Gosu/JDK11  (:pcmock)                        :8180/pc
- └─ web                Next.js  (Mission Control + /api/mcp)        :3000
+docker compose --profile pc up --build
+ ├─ db            postgres:16                                        :5432
+ ├─ backend       Gosu/JDK11 (:app :core :planner :pcexport :pcdeploy) :8080
+ ├─ web           Next.js (Mission Control + /api/mcp)               :3000
+ └─ policycenter  temurin:11 + bind-mounted licensed PC install      :8180/pc   (profile "pc")
+                  ▲ backend writes the overlay into ${PC_HOME}/modules/configuration (bind mount)
+                  ▲ restart trigger → PC rebuilds, restarts → backend polls, then ProductModelAPI SOAP check
 ```
 
 ```
-backend/                      Gradle multi-module, Gosu, JDK 11
-  settings.gradle  build.gradle  Dockerfile  (multi-stage: temurin:11-jdk → temurin:11-jre)
-  contracts/   provenpath.contracts.*      Proposal, Clause, Citation, NodeResult, Verdict, Event
-  core/        provenpath.core.engine.*    RuleLoader, RuleGraph (JGraphT), LogicEvaluator
-               provenpath.core.layers.*    Check (abstract) → Type/Range/Consistency/RuleMatch/Source/GroundingCheck
-               provenpath.core.gate.*      Gate (all-or-nothing), GateToken (HMAC), Hashing
-  planner/     provenpath.planner.*        GeminiClient, Planner, RepairLoop, FixturePlanner   ← depends ONLY on :contracts
-  app/         provenpath.app.*            Main (Javalin), api/, db/ (JDBC+Flyway), events/, services/VerifyService, ToolService
-               resources/db/migration/V1__init.sql
-  pcmock/      provenpath.pcmock.*         Main, PreUpdateHandler, ProductModelXmlBuilder     ← depends ONLY on :contracts
-  eval/        provenpath.eval.RunEval     corpus → metrics.json
-shared/tools/*.json           JSON Schemas of the 4 tools (used by the Gosu planner AND the TS MCP server)
-rules/sources.yaml  rules/rules/*.yaml
-eval/corpus/*.json   eval/metrics.json
-fixtures/proposal_demo_blocked.json  proposal_demo_fixed.json  events_demo_run.jsonl
-web/                          Next.js App Router + TS + Tailwind + @xyflow/react
-  app/page.tsx  components/*  lib/useExecutionStream.ts  app/api/mcp/route.ts
-docker-compose.yml  .env.example
+backend/                       Gradle multi-module, Gosu, JDK 11
+  contracts/   provenpath.contracts.*     Proposal, Clause, Citation, NodeResult, Verdict, Event, ports
+  core/        provenpath.core.{engine,layers,gate}.*
+  eval/        provenpath.eval.RunEval
+  planner/     provenpath.planner.*       ← depends ONLY on :contracts
+  pcexport/    provenpath.pcexport.*      Proposal + Verdict + Review → PC overlay files + signed manifest  ← only :contracts
+  pcdeploy/    provenpath.pcdeploy.*      write overlay, restart PC, poll, ProductModelAPI/SubmissionAPI SOAP
+  app/         provenpath.app.*           Javalin API, db (JDBC+Flyway), events, services, wiring
+policycenter/                  OUR files only (safe for a public repo)
+  Dockerfile  entrypoint.sh    (temurin:11, runs gwb runServer from /opt/pc; restart loop on /opt/pc-trigger/restart)
+  overlay-template/            hand-built SMCyber v0 (product XML, coverage patterns, display keys) → template for :pcexport
+  plugin/gsrc/provenpath/pc/   ProvenPathValidation.gs (PC-side gate) + registration notes
+  README.md                    exact steps to install the overlay + plugin into a PC 10 install
+shared/tools/*.json  rules/  eval/corpus/  fixtures/  docs/events.md  docs/policycenter.md
+web/                           Next.js
+team/                          per-person briefs
 ```
 
-**The boundary is enforced by the compiler (invariant 1).** `:planner` depends only on `:contracts`. It receives a `VerifyPort` interface, which `:app` wires to `VerifyService`, so any attempt to `uses provenpath.core.*` from the planner fails to compile. This is stronger than Python's import-linter and deserves a slide: *"the LLM code cannot even see the verdict code."*
+**The boundary is enforced by the compiler.** `:planner` and `:pcexport` depend only on `:contracts`, so LLM code cannot reach the verdict code (*"the LLM code cannot even see the verdict code"*).
 
-**The mock PolicyCenter is a separate container.** It shares only the HMAC secret, and rejects any write without a valid gate token plus an approved review. This is the `IPreUpdateHandler.gwp` pattern from `09_INTEGRATIONS.md`, as a real process boundary.
+**Three gates, three places:**
+1. **Pre-commit gate** (ProvenPath backend). `:pcdeploy` refuses to write anything to PC unless the gate token is valid **and** there's an approved review. `BLOCKED` means zero files are written to PC.
+2. **Signed manifest.** Every deployed overlay includes `provenpath-manifest.json`: file sha256s, `verdictHash`, `gateToken`, review id and reviewer, plus the verified ranges per coverage term.
+3. **Runtime gate inside PolicyCenter.** `ProvenPathValidation.gs` (a validation rule on `PolicyPeriod` at `TC_DEFAULT`/`TC_BIND`, or an `IValidationPlugin`) reads the manifest and rejects SMCyber coverage terms outside the verified range with the rule code. Demo line: *"even a human typing directly in PolicyCenter can't get past it."*
 
-**One set of tools, two ways to reach them.** The Gosu planner uses the 4 tools in-process as Gemini function declarations. The Next.js MCP server exposes the same 4 tools, built from the same `shared/tools/*.json`, to any external agent (Claude Desktop, MCP Inspector). Demo line: *"even an outside agent goes through the same gate."*
-
-**Two cheap features for the "what if the AI lies?" question:**
-1. **Tamper button:** a proposal with `"compliant": true` and a real source id but fabricated text. The SOURCE layer blocks it because the sha256 doesn't match.
-2. **Bypass button:** call `policycenter-mock` directly without a token. It returns `403 PC_PREUPDATE_REJECTED`.
+**Tamper demo:** a proposal with `"compliant": true` and a real source id but fabricated text is blocked at the SOURCE layer (sha256 mismatch).
 
 ---
 
 ## 3. Shared contracts (frozen at Checkpoint 0; changes need a PR plus a ping to the whole team)
 
-**`backend/contracts`** (owner: Shaurya). Gosu classes, serialized with Jackson:
+**`backend/contracts`** (owner: Shaurya):
 
 ```
-Citation    { sourceCode, section, textSnippet }                 // snippet must byte-match stored source text
-Clause      { clauseId, kind: COVERAGE|EXCLUSION|RATING, patternCode, category, owningEntityType,
-              existence, limitMaxInr, deductibleInr, waitingHours, conditions[], factors{}, citations[] }
+Citation    { sourceCode, section, textSnippet }
+Clause      { clauseId, kind: COVERAGE|EXCLUSION|RATING, patternCode, name, category, owningEntityType,
+              existence, limitMaxInr, deductibleInr, waitingHours, conditions[], factors{},
+              excludesPatternCodes[], citations[] }
 Proposal    { proposalId, executionId, iteration, line:"SMCyber", aggregateLimitInr, turnoverInr,
-              targetEffectiveDate, clauses[], proseSummary, llmMeta{} }
+              minimumPremiumInr, targetEffectiveDate, jurisdiction:"IN", clauses[], proseSummary, llmMeta{} }
 NodeResult  { ruleCode, clauseId, layer: TYPE|RANGE|CONSISTENCY|RULE_MATCH|SOURCE|GROUNDING,
               result: PASSED|FAILED|SKIPPED|NEEDS_REVIEW, expected, actual, reason, sourceCode }
 Verdict     { runId, status: PASSED|BLOCKED, nodes[], rulesetHash, proposalHash, verdictHash, gateToken? }
 Event       { executionId, seq, ts, type, payload }
+PcManifest  { productCode, files[{path, sha256}], verdictHash, gateToken, reviewId, reviewer,
+              termRanges[{patternCode, termCode, min, max, ruleCode}], generatedAt }
 ```
 
-- `NEEDS_REVIEW` (a clause no rule covers, per invariant 6) is **blocking**.
-- `SKIPPED` means an upstream rule failed. The UI shows it greyed out.
-- The same shapes are mirrored as TypeScript types in `web/lib/contracts.ts`, owned by Vaishnavi and kept in sync.
+- `NEEDS_REVIEW` and `FAILED` both block.
+- `owningEntityType` for Phase 1 = `GLLine`. Pattern codes stay `SMCyber*Cov`.
+- TypeScript mirror: `web/lib/contracts.ts` (Vaishnavi).
 
-**SSE event types** (`docs/events.md`, owner: Chinmay): `run.started` · `planner.step` · `tool.called` · `tool.result` · `proposal.created` · `verify.started` · `verify.node` · `gate.blocked` · `gate.passed` · `planner.repair` · `review.requested` · `review.decided` · `pc.request` · `pc.response` · `run.completed`
+**SSE event types** (`docs/events.md`): `run.started` · `planner.step` · `tool.called` · `tool.result` · `proposal.created` · `verify.started` · `verify.node` · `gate.blocked` · `gate.passed` · `planner.repair` · `review.requested` · `review.decided` · `pc.export` · `pc.write` · `pc.restart` · `pc.ready` · `pc.verified` · `pc.failed` · `run.completed`
 
 **REST API** (Gosu backend `:8080`):
 
 | Method | Path | Purpose |
 |---|---|---|
-| POST | `/api/v1/executions` `{prompt}` | Start a run → `{executionId}` |
-| GET | `/api/v1/executions/{id}` | Current state |
-| GET | `/api/v1/executions/{id}/stream` | SSE: history from seq 0, then live |
-| POST | `/api/v1/tools/{name}` | The 4 tools (used by the MCP route) |
-| POST | `/api/v1/verify` | Verify a raw proposal (used by the tamper button) |
-| POST | `/api/v1/reviews` | Reviewer approve/reject |
-| POST | `/api/v1/executions/{id}/replay` | Re-verify → `{verdictHash, originalHash, match}` |
-| GET | `/api/v1/provenance/{clauseId}` | Clause → rule → source → layer results |
-| GET | `/api/v1/metrics` | Serves `eval/metrics.json` |
-| GET | `/api/v1/rules` | Rule DAG for the graph |
+| POST | `/api/v1/executions` `{prompt}` | Start a run |
+| GET | `/api/v1/executions/{id}` · `/stream` (SSE) | State + live events (history from seq 0) |
+| POST | `/api/v1/tools/{name}` | The 4 tools (for MCP) |
+| POST | `/api/v1/verify` | Verify a raw proposal (tamper button) |
+| POST | `/api/v1/reviews` | Approve/reject |
+| POST | `/api/v1/deployments` `{executionId}` | Deploy to PC (token + approval enforced) |
+| GET | `/api/v1/deployments/{id}` · `/package` | Status + overlay zip + manifest |
+| POST | `/api/v1/executions/{id}/replay` | Re-verify → hash match |
+| GET | `/api/v1/provenance/{clauseId}` · `/metrics` · `/rules` | |
 
-`policycenter-mock` (`:8180/pc`) exposes `create_product`, `add_coverage`, `configure_rating`, `deploy_product` and `GET /artifact/{id}` (XML zip).
-
-**Rule YAML** (owner: Dhriti, validated by Shaurya):
-
-```yaml
-rule_code: CYB-RNG-002
-name: Ransomware/extortion sublimit ≤ 50% of aggregate
-layer: RANGE
-applies_to: "coverage[patternCode=SMCyberExtortionCov]"
-depends_on: [CYB-TYPE-001, CYB-RNG-001]
-logic: {operator: LTE, field: "clause.limitMaxInr", value_ref: "proposal.aggregateLimitInr * 0.5"}
-source_code: IRDAI-CYB-G-2024-S3.4
-error_template: "Extortion sublimit ₹{actual} exceeds 50% of aggregate (₹{expected})"
-pc_mapping: "CovTermPattern SMCyberExtortionLimit (modelType=Limit)"
-```
-
-`value_ref` grammar is deliberately tiny: `<path> [* <number>]`. There is no `eval` anywhere.
+**Rule YAML:** see `rules/README.md` (format from plan v1). `value_ref` grammar is `<path> [* <number>]`, with no eval anywhere.
 
 ---
 
-## 4. Database: 8 tables for the MVP (`V1__init.sql`)
+## 4. ProvenPath DB: 8 tables (`V1__init.sql`)
 
-| Keep | Change from the 16-table architecture doc |
-|---|---|
-| `pp_regulatory_source` | Add `text_sha256` |
-| `pp_rule` | `depends_on` as a text array. Drops `pp_rule_dependency` and `pp_rule_parameter` |
-| `pp_proposal` | Clauses as **JSONB**. Drops the 4 child tables. Add `execution_id` and `iteration` |
-| `pp_verification_run` | Add `ruleset_hash`, `proposal_hash`, `verdict_hash` |
-| `pp_verification_node` | As specified. Drops `pp_verification_edge` |
-| `pp_compliance_review` | Reviewer = one of the seeded users |
-| `pp_deployment` | Keep `artifact_manifest` and `pc_response_*` |
-| `pp_event_log` | Audit log and SSE stream in one table. **A trigger rejects UPDATE/DELETE** |
+`pp_regulatory_source` (+`text_sha256`) · `pp_rule` (`depends_on` array) · `pp_proposal` (clauses JSONB, `execution_id`, `iteration`) · `pp_verification_run` (+ hashes) · `pp_verification_node` · `pp_compliance_review` · `pp_deployment` (+ `manifest` JSONB, `pc_status`, `pc_verified_at`) · `pp_event_log` (append-only; a trigger rejects UPDATE/DELETE).
 
-Seed two users: *"A. Mehta — Compliance Reviewer"* and *"PM Demo"*.
+Seed users: *"A. Mehta — Compliance Reviewer"*, *"PM Demo"*. The dropped tables from the 16-table doc are roadmap items.
 
 ---
 
 ## 5. The rule set: 22 IRDAI-style curated rules
 
-The values are **curated parameters, not legal advice**. The one real anchor is CERT-In's 6-hour incident reporting direction (2022).
+These are curated parameters, not legal advice. The only real anchor is the CERT-In 6-hour reporting direction (2022).
 
-| Layer | Rule codes | What they check |
+| Layer | Rules | Checks |
 |---|---|---|
-| **TYPE** (3) | CYB-TYPE-001..003 | Money fields in INR · `patternCode` matches `^SMCyber[A-Za-z]+Cov$` (mirrors `FieldValidators.xml`) · `existence` enum · `owningEntityType == SMCyberLine` · allowed `category` |
-| **RANGE** (7) | CYB-RNG-001..007 | Aggregate ₹5L–₹5Cr · extortion sublimit ≤ 50% of aggregate · deductible 1–10% of limit · BI waiting period 8–72h · turnover ≤ ₹250Cr · rating factors 0.5–3.0 · minimum premium floor |
-| **CONSISTENCY** (4) | CYB-CON-001..004 | Sum of first-party sublimits ≤ aggregate · deductible < limit · no exclusion nullifies a Required coverage · no duplicate pattern codes |
-| **RULE-MATCH** (5) | CYB-RM-001..005 | Mandatory coverages (Data Breach Response, Privacy Liability) · mandatory exclusions (war/state-sponsored, prior known incidents, intentional acts, infrastructure failure) · ransom cover carries a law-enforcement-notification condition · fines only "where insurable by law" · CERT-In 6-hour notification condition |
-| **SOURCE** (3) | CYB-SRC-001..003 | ≥1 citation per clause · source exists and the snippet sha256 matches · source active on the effective date, jurisdiction IN |
-| **GROUNDING** (1) | CYB-GRD-001 | Every ₹/L/Cr/% number in `proseSummary` equals a verified clause value |
+| TYPE (3) | CYB-TYPE-001..003 | Money fields in INR · `^SMCyber[A-Za-z]+Cov$` · existence enum · owning entity · category |
+| RANGE (7) | CYB-RNG-001..007 | Aggregate ₹5L–₹5Cr · extortion ≤ 50% of aggregate · deductible 1–10% · BI waiting period 8–72h · turnover ≤ ₹250Cr · factors 0.5–3.0 · minimum premium |
+| CONSISTENCY (4) | CYB-CON-001..004 | Σ first-party ≤ aggregate · deductible < limit · no exclusion nullifies a Required coverage · no duplicates |
+| RULE-MATCH (5) | CYB-RM-001..005 | Mandatory coverages · mandatory exclusions · ransom → law-enforcement notification · fines only "where insurable" · CERT-In 6h |
+| SOURCE (3) | CYB-SRC-001..003 | Citation present · snippet byte-exact with sha256 · source active + IN |
+| GROUNDING (1) | CYB-GRD-001 | Every number in the prose matches a verified value |
 
-**Demo trigger:** ₹50L aggregate with a ₹40L extortion sublimit (80%) → **CYB-RNG-002 FAILS**, CYB-CON-001 is **SKIPPED**, and the gate reports **BLOCKED**. The repair iteration proposes ₹20L and passes.
+**Demo trigger:** a ₹40L extortion sublimit on a ₹50L aggregate fails **CYB-RNG-002**, CYB-CON-001 is SKIPPED, and the gate reports BLOCKED. The repair proposes ₹20L and passes. The RANGE rules also become `termRanges` in the PC manifest, so the same limits are enforced inside PC.
 
 ---
 
 ## 6. Hour-by-hour plan
 
-### Day 1: build everything against fixtures, then connect it
+### Day 1
 
-| Time | 🅰 Shaurya: Core (Gosu) | 🅱 Chinmay: Platform (Gosu + Docker) | 🅲 Dhriti: AI + Rules | 🅳 Vaishnavi: Next.js |
+| Time | 🅰 Shaurya: Core + App | 🅱 Chinmay: Real PolicyCenter | 🅲 Dhriti: AI + Rules | 🅳 Vaishnavi: Next.js |
 |---|---|---|---|---|
-| **09:00–10:30** | Write `:contracts` Gosu classes, `docs/events.md` with Chinmay, the 3 fixtures, `.env.example`. Push by 10:30 | **Gosu spike ⭐:** Gradle multi-module + gosu plugin, JDK 11 Dockerfile, Javalin `GET /health` from a Gosu `Main`, `docker-compose.yml` with db + backend + web placeholder. Push by 10:30 | Read the docs, draft `rules/sources.yaml` (~12 sections + CERT-In), start the rule YAMLs | `create-next-app` (TS, Tailwind, App Router) in `web/`, Dockerfile, 5-panel layout, `lib/contracts.ts` |
-| **10:30** | **CP0: contracts + skeleton on `main`; `docker compose up --build` runs all containers (15-min standup)** | | | |
-| **10:30–13:30** | `RuleLoader` (SnakeYAML → model, cycle check), `RuleGraph` (JGraphT, topological order), `LogicEvaluator` (`AND OR NOT GT GTE LT LTE EQ NEQ IN REGEX EXISTS TYPE_IS` + `value_ref`), SKIPPED propagation. JUnit tests | Flyway `V1__init.sql` (8 tables + append-only trigger), JDBC/Hikari DAO layer, seed loader (users, sources, rules YAML → DB) | **All 22 rule YAMLs** following §5; check at 12:00 that Shaurya's loader parses them. `shared/tools/*.json` schemas for the 4 tools | `useExecutionStream` (EventSource, dedupe by seq, reconnect) + dev route `app/api/dev-stream` that replays `fixtures/events_demo_run.jsonl` as SSE |
-| **13:30** | **CP1: each track runs on its own against fixtures** | | | |
-| **14:00–18:00** | `Check` abstract class + 6 subclasses (invariant 8), `Gate` (all-or-nothing; NEEDS_REVIEW blocks), `Hashing` (canonical JSON sha256), `GateToken` (HMAC). Tests: blocked fixture → BLOCKED on RNG-002, fixed fixture → PASSED | Event bus (insert into `pp_event_log` with seq → publish), Javalin SSE `/executions/{id}/stream` (subscribe-then-replay), `POST /executions`, `GET /executions/{id}`, `POST /verify`, `GET /rules`, CORS for :3000 | `:planner` in Gosu: `GeminiClient` (HttpClient → Gemini REST, function declarations from `shared/tools`), `Planner` builds a `Proposal` via the tool loop, emits `planner.step`/`tool.*` through the `EventPort` interface. `FixturePlanner` for `LLM_MODE=fixture` | React Flow DAG from `/rules` (columns by layer, edges = depends_on), colored live by `verify.node`. Trace timeline. Tools panel with collapsible JSON |
-| **18:00** | **CP2: walking skeleton ⭐ (most important checkpoint).** `POST /executions` in fixture mode → Gosu engine → events → SSE → the Next.js graph turns red on RNG-002. **Everything merged to `main`, running in Docker.** | | | |
-| **19:00–23:00** | Wire `:core` into `VerifyService` in `:app`: persist run + nodes + `rule_logic_snapshot`, emit `verify.node` in topological order ~150ms apart. Confirm `:planner` has no dependency on `:core` | **`:pcmock` container** (`:8180/pc`): 4 endpoints with Guidewire-like JSON; `PreUpdateHandler` → 403 `PC_PREUPDATE_REJECTED` unless HMAC token valid + review approved (checks backend `/reviews`). `POST /reviews`. `pc.request/response` events | Live Gemini path end to end (Pydantic-style validation in Gosu: malformed → retry once → fixture). RAG-lite: keyword match over sources into the prompt (drafting only). **MCP route** `web/app/api/mcp/route.ts` (TS SDK, Streamable HTTP): 4 tools → `POST backend/api/v1/tools/{name}`. Test with MCP Inspector | **Blocked card** (rule, layer, expected vs actual, reason, source text, "NOTHING WRITTEN TO POLICYCENTER"). **Reviewer panel** (named reviewer, per-clause provenance, Approve/Reject, comment required on reject). Switch from the dev stream to the real backend |
-| **23:00** | **CP3: live LLM → verify → BLOCKED in UI; review + mock PC deploy via API. Write down what broke. Stop by 23:30.** | | | |
+| **09:00–10:30** | Review/merge agy's Track A output (contracts, core, rules seed, fixtures). Freeze contracts. Push `main` | **PC boot spike ⭐:** start the licensed PC 10 natively, then in Docker (`policycenter/Dockerfile`, bind-mount `${PC_HOME}`). Note boot and restart times. Write `docs/policycenter.md` | Review rules seed + `sources.yaml`, tighten wording, make citations exact | `create-next-app`, Dockerfile, layout, `lib/contracts.ts` |
+| **10:30** | **CP0: contracts + skeleton on `main`; `docker compose up --build` runs db + backend + web** | | | |
+| **10:30–13:30** | `:app`: Javalin, Flyway `V1__init.sql` + append-only trigger, DAO, seed loader | **Hand-build SMCyber v0 in real PC:** `products/SMCyber/SMCyber.xml`, 3 coverage patterns on `GLLine` (Data Breach, Extortion, Business Interruption) with `<CovTerms>` (limit/deductible `OptionCovTermPattern` / `DirectCovTermPattern`, money), `AvailabilityScript` on product code, display keys. Rebuild → New Submission → SMCyber shows the coverages | `shared/tools/*.json`; start `:planner` GeminiClient | `useExecutionStream` + dev SSE replay of `fixtures/events_demo_run.jsonl` |
+| **13:30** | **CP1: each track runs on its own. The PC spike result decides Docker vs native.** | | | |
+| **14:00–18:00** | Event bus → `pp_event_log` → SSE (subscribe-then-replay); `POST /executions`, `/verify`, `/rules`, `/tools/{name}`, `/reviews`; wire `:core` into `VerifyService` (emit `verify.node` in topological order) | Copy **our** v0 files into `policycenter/overlay-template/` (only files we wrote). `:pcexport`: Proposal → overlay files from the template + `PcManifest` (sha256s, termRanges from the RANGE rules). Golden test: fixed fixture → the same structure as v0 | `:planner`: tool loop → `Proposal`, `planner.*`/`tool.*` events, `FixturePlanner` | React Flow DAG from `/rules`, live colors, trace, tools panel |
+| **18:00** | **CP2 ⭐ walking skeleton:** fixture run → Gosu gate → SSE → UI graph turns red on RNG-002. **And SMCyber v0 is visible in real PC.** Merge everything. | | | |
+| **19:00–23:00** | Review workflow state machine; `/replay`, `/provenance`, `/metrics`; `planner` wiring via `VerifyPort`/`EventPort` | `:pcdeploy`: check token + approval → back up the previous SMCyber files → write the overlay into the mounted `modules/configuration` → touch the restart trigger → poll `/pc` → `pc.*` events | Live Gemini path, validation → retry → fixture; RAG-lite; **MCP route** in `web/` | Blocked card, reviewer panel, switch to the real backend |
+| **23:00** | **CP3: live LLM → BLOCKED → (manual fixed proposal) → approve → overlay written into real PC. Stop by 23:30.** | | | |
 
-### Day 2: close the loop, measure it, harden it, rehearse
+### Day 2
 
 | Time | 🅰 Shaurya | 🅱 Chinmay | 🅲 Dhriti | 🅳 Vaishnavi |
 |---|---|---|---|---|
-| **09:00–09:30** | **Standup: triage the CP3 breakage list** | | | |
-| **09:30–12:30** | `:eval` `RunEval` (Gosu main, run via `docker compose run backend eval`): corpus → `metrics.json` (accuracy, **false-pass**, false-block, denominators, per-layer confusion). Fix engine until **false-pass = 0**. Determinism: 50 runs → identical `verdictHash` | `ProductModelXmlBuilder` in `:pcmock`: `products/SMCyber/SMCyber.xml`, `policylinepatterns/SMCyberLine/SMCyberLine.xml`, `coveragepatterns/*.xml` with `<CovTerms>` `OptionCovTermPattern` (Limit/Deductible, money), exclusions, lookup CSV (per `02_PRODUCT_MODEL.md`). `GET /artifact/{id}` zip + diff manifest | **Corpus** `eval/corpus/`: ≥40 labelled items (~20 pass / ~20 fail incl. fake citation, altered text, lakh/crore trick, off-by-one cap, missing exclusion, missing CERT-In, injected `"compliant": true`, prose number mismatch). Hand to Shaurya by 11:00 | Deploy panel (exact PC payload + XML tab), Provenance drawer, Metrics panel (show denominators), before/after slider |
-| **12:30** | **CP4: full demo path end to end in Docker. Anything not working now gets cut (§8).** | | | |
-| **13:30–15:00** | Grounding parser hardening (₹/L/Cr/%), tamper test, 100% provenance check | Review state machine (`verified_pass → review_pending → approved/rejected → deployed`), `/replay`, `/provenance`, `/metrics`. Healthchecks + `depends_on` in compose; seeded demo volume | **Repair loop** (feed named failures back, max 2 iterations, `planner.repair`). Tune the demo prompt for blocked → fixed; record the fixture from a good live run | Replay (3× playback + "Re-verify → identical hash ✔"), Tamper + Bypass buttons, loading/error states, disclaimer footer |
-| **15:00** | **CP5: feature freeze. Bugs only.** | | | |
-| **15:00–17:00** | Bug bash: demo script ×3 in live and fixture mode | Clean-machine test: `git clone` → `docker compose up --build` → demo works. Check image sizes and startup order | README (run instructions, architecture, Gosu boundary diagram) | **Pitch deck** (6 slides) |
-| **17:00–18:00** | **Record the backup demo video. Code freeze at 18:00, tag `v1.0-demo`.** | | | |
-| **18:00–20:00** | **3 timed rehearsals with gotcha questions (§9).** | | | |
+| **09:00–09:30** | **Standup: CP3 breakage triage** | | | |
+| **09:30–12:30** | `RunEval` → `metrics.json`, **false-pass = 0**, determinism ×50; help Chinmay with `:pcexport` term mapping | **ProductModelAPI SOAP check** after restart (the SMCyber patterns exist → `pc.verified`). **PC-side gate:** `ProvenPathValidation.gs` in PC `gsrc` + a validation rule on PolicyPeriod: SMCyber cov term outside the manifest `termRanges` → reject at `TC_DEFAULT` with `"CYB-RNG-002: ..."` | Corpus ≥40 items to Shaurya by 11:00; repair loop | **PC deploy panel:** export → write → restart progress → ready → verified; file list + manifest viewer; **"Open in PolicyCenter"** button; provenance drawer; metrics |
+| **12:30** | **CP4: the full path lands in real PC. Request → BLOCKED → repair → PASSED → approve → deploy → PC restart → SMCyber in New Submission → an over-limit value typed in PC is rejected by the Gosu gate.** Anything not working now gets cut (§8). | | | |
+| **13:30–15:00** | Grounding hardening, tamper test, 100% provenance | Stretch, in order: (a) `SubmissionAPI` SOAP creates an SMCyber submission from ProvenPath, (b) startup manifest-hash check, (c) rate book import + rating for the cyber coverages so it quotes | Tune the demo prompt; record the fixture from a good live run | Replay (3× + "Re-verify → identical hash"), Tamper button, before/after slider, disclaimer footer |
+| **15:00** | **CP5: feature freeze.** | | | |
+| **15:00–17:00** | Bug bash ×3 (live + fixture) | **Pre-deployed backup PC** (a snapshot of a good state); time the restart; `policycenter/README.md` | README | Pitch deck (6 slides) |
+| **17:00–18:00** | **Record the backup video, including PC. Code freeze + tag `v1.0-demo`.** | | | |
+| **18:00–20:00** | **3 timed rehearsals.** | | | |
 
 ---
 
-## 7. Definition of done, per track
+## 7. Definition of done
 
-- **A:** 22 rules load, the DAG is acyclic, and all 6 checks have JUnit tests. Blocked fixture → BLOCKED on RNG-002 with CON-001 SKIPPED. Fixed fixture → PASSED with a token. `metrics.json` shows **false-pass = 0** with the denominator. 50/50 identical hashes. `:planner` has no `:core` dependency.
-- **B:** A clean `docker compose up --build` works with seed data. Late SSE subscribers get the full history. The event log rejects UPDATE/DELETE. PC mock returns 403 without token/approval and 200 with both. The XML zip looks Guidewire-shaped. Replay works.
-- **C:** The live planner produces a valid proposal for the demo prompt. The repair loop reaches PASSED within 2 iterations. Fixture mode works offline. The MCP route's 4 tools are callable from MCP Inspector. Corpus ≥40 items.
-- **D:** The whole demo runs from the browser with no curl. The blocked card names rule, layer and citation. Reviewer actions are logged. Metrics show denominators. Replay, tamper and bypass work. The disclaimer is visible everywhere.
+- **A:** 22 rules, all 6 checks tested, blocked/fixed fixtures behave correctly, false-pass = 0 with the denominator, 50/50 identical hashes. The API, SSE with full history, append-only log, review and replay all work.
+- **B:** SMCyber shows up in **real** PC's New Submission after a ProvenPath deploy. `ProductModelAPI` confirms it. BLOCKED writes 0 files. An over-limit value in the PC UI is rejected with the rule code. The repo contains **zero Guidewire files**.
+- **C:** The live planner produces a valid proposal, repair reaches PASSED in ≤2 iterations, fixture mode works offline, the MCP tools work in Inspector, and the corpus has ≥40 items.
+- **D:** The whole demo is driven from the browser plus the PC tab. Deploy progress is live, metrics show denominators, and replay and tamper work.
 
----
+## 8. Cut list (from the top, at CP4)
 
-## 8. Cut list (drop from the top when behind at CP4)
+1. RAG-lite.
+2. Replay animation (keep the hash re-verify).
+3. MCP route (use a slide).
+4. Stretch B items (SubmissionAPI, startup hash check, rating).
+5. PC in Docker → PC native with `host.docker.internal`.
+6. Live PC restart during the demo → pre-deployed PC plus a recorded deploy clip.
+7. Gosu planner → TypeScript planner in Next.js.
 
-1. RAG-lite retrieval. Put the static source list in the prompt instead.
-2. XML zip. Show the JSON payload; the XML becomes a slide.
-3. Replay playback animation. Keep "Re-verify → identical hash".
-4. MCP route. Show the tool schemas on a slide instead.
-5. Gosu planner stuck → move the planner into a Next.js route handler (TypeScript, `@google/genai`). **Core stays Gosu no matter what.**
-6. Live LLM → fixture mode for the demo, saying so honestly if asked.
-
-**Never cut:** the Gosu gate · the live BLOCKED moment · the reviewer gate · gate token + PC 403 · false-pass = 0 with denominator · the "not a legal opinion" line.
-
----
+**Never cut:** the Gosu gate · the live BLOCKED moment · the reviewer gate · SMCyber visible in real PC · the PC-side rejection · false-pass = 0 · "not a legal opinion".
 
 ## 9. Working rules
 
-- **Git:** branch per track (`track-a/...`), merge to `main` at every checkpoint. **`main` must always pass `docker compose up --build` + the fixture demo.** Contract changes go through a PR tagged `@all`. No AI co-author lines in commits.
-- **Build against fixtures first.** Nobody waits on anyone.
-- **Gosu is not Java.** Use `uses` (not `import`), `var x : Type`, `function`, `construct()`, blocks `\ x -> x * 2` (they coerce to Java lambdas/SAMs, e.g. Javalin handlers), properties, and `.gs` files. When unsure, check `07_GOSU.md` and gosu-lang.github.io. Don't let an agent silently write `.java` files.
-- **Docker:** backend image = multi-stage `eclipse-temurin:11-jdk` → `11-jre`. Web = `node:20-alpine`. Secrets only in `.env` (gitignored).
-- **Standups** only at checkpoints, 15 minutes each.
-- **Sleep:** stop by 23:30 on Day 1.
+- **Git:** branch per track, merge to `main` at checkpoints, and `main` always runs. No AI co-author lines. **Every PR diff is checked for Guidewire files before merge.**
+- **Build against fixtures first.** Nobody waits.
+- **Gosu is not Java:** `.gs`, `uses`, `var x : T`, `function`, `construct()`, blocks `\ x -> ...`. See `07_GOSU.md`.
+- **Secrets** go in `.env` only (`GEMINI_API_KEY`, `PROVENPATH_GATE_SECRET`, `PC_HOME`, `PC_USER`/`PC_PASSWORD`).
+- **Standups** at checkpoints, 15 minutes. **Sleep** by 23:30 on Day 1.
 
 ### Gotcha questions to rehearse
 
 | Judge asks | Show |
 |---|---|
-| "What if the AI hallucinates compliance?" | Tamper → SOURCE block. Module-graph slide: `:planner` cannot compile against `:core` |
-| "What stops someone skipping your gate?" | Bypass → PC 403 from a separate container (the PreUpdateHandler pattern) |
-| "Is this scripted?" | Replay → identical `verdictHash`, then type a fresh prompt live |
-| "Why Gosu?" | It's PolicyCenter's language. The gate classes can be registered as an `IPreUpdateHandler`/`IValidationPlugin` inside real PC |
-| "Only 22 rules?" | Deliberately: one line, curated, denominators shown. Roadmap: real IRDAI ingestion plus the full 16-table schema already designed |
-| "Is this legal sign-off?" | No. It's a rule-graph verdict plus a named human reviewer, and the footer says so |
+| "What if the AI hallucinates compliance?" | Tamper → SOURCE block. Module graph: `:planner` can't compile against `:core` |
+| "Is this really PolicyCenter?" | Open PC, New Submission → SMCyber, show the generated coverage-pattern XML + manifest |
+| "What if someone edits PC directly?" | Type an over-limit value in PC → the Gosu gate inside PC rejects it with the rule code |
+| "Is this scripted?" | Replay → identical hash. Type a fresh prompt |
+| "Why Gosu?" | The same language runs inside PolicyCenter. Our gate *is* a PC plugin |
+| "Only 22 rules / only GL line?" | Deliberate scope. Roadmap: a dedicated `SMCyberLine` via APD, real IRDAI ingestion |
+| "Legal sign-off?" | No. It's a rule-graph verdict plus a named reviewer. The footer says so |
 
 ### Demo beat owners
 
 | Beat | Presenter |
 |---|---|
-| Hook + close + "why Gosu" | Shaurya |
-| Live request + planner | Dhriti |
-| Verification moment + tamper/bypass | Shaurya |
-| Reviewer sign-off + PC deploy payload | Chinmay |
-| Metrics + before/after + replay | Vaishnavi |
+| Hook, close, "why Gosu" | Shaurya |
+| Live request | Dhriti |
+| Verification moment + tamper | Shaurya |
+| Reviewer + deploy into PC + PC-side rejection | Chinmay |
+| Metrics, before/after, replay | Vaishnavi |
