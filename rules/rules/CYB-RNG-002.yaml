@@ -1,0 +1,11 @@
+rule_code: CYB-RNG-002
+name: Extortion sublimit <= 50% of aggregate
+layer: RANGE
+applies_to: "coverage[patternCode=SMCyberExtortionCov]"
+depends_on: ["CYB-TYPE-001", "CYB-RNG-001"]
+logic:
+  operator: LTE
+  field: "clause.limitMaxInr"
+  value_ref: "proposal.aggregateLimitInr * 0.5"
+source_code: IRDAI-CYB-G-2024-S3.4
+error_template: "Extortion sublimit INR {actual} exceeds 50% of aggregate (INR {expected})"

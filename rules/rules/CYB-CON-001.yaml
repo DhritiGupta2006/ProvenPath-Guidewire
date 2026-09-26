@@ -1,0 +1,10 @@
+rule_code: CYB-CON-001
+name: Sum of first-party sublimits <= aggregate
+layer: CONSISTENCY
+applies_to: "proposal"
+depends_on: ["CYB-RNG-002"]
+logic:
+  operator: FN
+  name: "sumFirstPartyLimitsLteAggregate"
+source_code: IRDAI-CYB-G-2024-S6.1
+error_template: "Sum of sublimits exceeds aggregate"

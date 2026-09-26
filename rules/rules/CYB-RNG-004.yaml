@@ -1,0 +1,16 @@
+rule_code: CYB-RNG-004
+name: BI waiting period 8-72 hours
+layer: RANGE
+applies_to: "coverage[patternCode=SMCyberBusinessInterruptionCov]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: AND
+  children:
+    - operator: GTE
+      field: "clause.waitingHours"
+      value: 8
+    - operator: LTE
+      field: "clause.waitingHours"
+      value: 72
+source_code: IRDAI-CYB-G-2024-S3.3
+error_template: "BI waiting period {actual} not between 8 and 72"

@@ -1,0 +1,10 @@
+rule_code: CYB-SRC-001
+name: Every clause has >=1 citation
+layer: SOURCE
+applies_to: "clause[*]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "clauseHasCitation"
+source_code: IRDAI-CYB-G-2024-S5.1
+error_template: "Clause lacks citations"

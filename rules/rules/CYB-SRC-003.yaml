@@ -1,0 +1,10 @@
+rule_code: CYB-SRC-003
+name: Source active on proposal target effective date
+layer: SOURCE
+applies_to: "clause[*]"
+depends_on: ["CYB-SRC-001"]
+logic:
+  operator: FN
+  name: "sourceActiveOnEffectiveDate"
+source_code: IRDAI-CYB-G-2024-S5.2
+error_template: "Source not active on effective date"

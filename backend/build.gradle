@@ -1,0 +1,71 @@
+plugins {
+    id 'org.gosu-lang.gosu' version '8.2.1' apply false
+}
+
+subprojects {
+    apply plugin: 'org.gosu-lang.gosu'
+    
+    repositories {
+        mavenCentral()
+    }
+    
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    
+    dependencies {
+        implementation 'org.gosu-lang.gosu:gosu-core:1.18.1'
+        implementation 'org.gosu-lang.gosu:gosu-core-api:1.18.1'
+        
+        testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+    
+    test {
+        useJUnitPlatform()
+    }
+    
+    sourceSets {
+        main {
+            gosu {
+                srcDir 'src/main/gosu'
+            }
+        }
+        test {
+            gosu {
+                srcDir 'src/test/gosu'
+            }
+        }
+    }
+}
+
+project(':contracts') {
+    dependencies {
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    }
+}
+
+project(':core') {
+    dependencies {
+        implementation project(':contracts')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+        implementation 'org.yaml:snakeyaml:2.2'
+        implementation 'org.jgrapht:jgrapht-core:1.5.2'
+    }
+}
+
+project(':eval') {
+    apply plugin: 'application'
+    
+    mainClassName = 'provenpath.eval.RunEval'
+    
+    dependencies {
+        implementation project(':contracts')
+        implementation project(':core')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    }
+}

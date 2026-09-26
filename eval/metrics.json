@@ -1,0 +1,122 @@
+{
+  "total" : 12,
+  "falsePassRate" : 0.0,
+  "falsePassCount" : 0,
+  "falseBlockRate" : 0.0,
+  "provenanceCompleteness" : 1.0,
+  "accuracy" : 1.0,
+  "falsePassDenominator" : 6,
+  "perLayer" : {
+    "CONSISTENCY" : {
+      "passed" : 64,
+      "failed" : 0
+    },
+    "GROUNDING" : {
+      "passed" : 11,
+      "failed" : 1
+    },
+    "SOURCE" : {
+      "passed" : 264,
+      "failed" : 3
+    },
+    "RULE_MATCH" : {
+      "passed" : 39,
+      "failed" : 1
+    },
+    "TYPE" : {
+      "passed" : 267,
+      "failed" : 0
+    },
+    "RANGE" : {
+      "passed" : 81,
+      "failed" : 2
+    }
+  },
+  "falseBlockDenominator" : 6,
+  "perItem" : [ {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_baseline"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_high_limit"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_low_deductible"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_low_turnover"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_max_waiting"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_minimal"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-SRC-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-SRC-002" ],
+    "id" : "noncompliant_altered_snippet"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-002" ],
+    "id" : "noncompliant_extortion_51pct"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-SRC-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-SRC-002", "CYB-SRC-003" ],
+    "id" : "noncompliant_fake_source"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-002" ],
+    "id" : "noncompliant_injected_compliant"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-GRD-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-GRD-001" ],
+    "id" : "noncompliant_lakh_trick"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RM-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RM-002" ],
+    "id" : "noncompliant_missing_war_excl"
+  } ],
+  "falseBlockCount" : 0
+}

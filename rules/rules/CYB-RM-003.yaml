@@ -1,0 +1,10 @@
+rule_code: CYB-RM-003
+name: Ransom cover carries law-enforcement-notification condition
+layer: RULE_MATCH
+applies_to: "coverage[patternCode=SMCyberExtortionCov]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "ransomHasLawEnforcementCondition"
+source_code: IRDAI-CYB-G-2024-S4.3
+error_template: "Law enforcement condition missing"

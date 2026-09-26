@@ -1,0 +1,11 @@
+rule_code: CYB-RNG-007
+name: Minimum premium floor
+layer: RANGE
+applies_to: "proposal"
+depends_on: []
+logic:
+  operator: GTE
+  field: "proposal.minimumPremiumInr"
+  value: 10000
+source_code: IRDAI-CYB-G-2024-S3.7
+error_template: "Premium {actual} below floor of 10000"

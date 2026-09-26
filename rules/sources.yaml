@@ -1,0 +1,168 @@
+sources:
+  - source_code: IRDAI-CYB-G-2024-S2.1
+    title: Pattern Code and Money Field Validation
+    section: "2.1"
+    full_text: "All coverage and exclusion pattern codes for SME Cyber Insurance products shall conform to the naming convention SMCyber[A-Za-z]+(Cov|Excl) as registered in the product model. All monetary fields including limits, deductibles, and premiums shall be denominated in Indian Rupees (INR) and shall be non-negative integers. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S2.2
+    title: Owning Entity Validation
+    section: "2.2"
+    full_text: "Every clause in an SME Cyber Insurance product shall be owned by the GLLine entity type as defined in the Guidewire PolicyCenter product model hierarchy. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S2.3
+    title: Existence and Category Validation
+    section: "2.3"
+    full_text: "Each clause shall declare a valid existence type from the set {Required, Suggested, Electable, Preset} and a category from {CyberFirstParty, CyberThirdParty, CyberExclusion, CyberRating} as appropriate for its function. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.1
+    title: Aggregate Limit Range
+    section: "3.1"
+    full_text: "The aggregate limit for any SME Cyber Insurance policy shall be not less than INR 5,00,000 (five lakh rupees) and shall not exceed INR 5,00,00,000 (five crore rupees). (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.2
+    title: Deductible Ranges
+    section: "3.2"
+    full_text: "Deductibles for individual coverages shall be set between 1% and 10% of the respective coverage limit to ensure adequate risk retention by the insured. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.3
+    title: Business Interruption Waiting Period
+    section: "3.3"
+    full_text: "The waiting period for Business Interruption coverage under cyber insurance shall be not less than 8 hours and not more than 72 hours from the time of the qualifying cyber event. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.4
+    title: Extortion Sublimit
+    section: "3.4"
+    full_text: "The sublimit for Cyber Extortion or Ransomware coverage shall not exceed 50% of the policy aggregate limit to prevent disproportionate exposure to extortion-related claims. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.5
+    title: Turnover Cap
+    section: "3.5"
+    full_text: "SME Cyber Insurance products under this guideline are restricted to enterprises with annual turnover not exceeding INR 250 crore. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.6
+    title: Rating Factor Range
+    section: "3.6"
+    full_text: "All rating factors applied in premium calculation for SME Cyber Insurance shall fall within the range of 0.50 to 3.00 inclusive. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S3.7
+    title: Minimum Premium Floor
+    section: "3.7"
+    full_text: "A minimum premium floor of INR 10,000 shall apply to all SME Cyber Insurance policies regardless of coverage selections or factor adjustments. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S4.1
+    title: Mandatory Coverages
+    section: "4.1"
+    full_text: "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S4.2
+    title: Mandatory Exclusions
+    section: "4.2"
+    full_text: "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl). (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S4.3
+    title: Ransom Notification Condition
+    section: "4.3"
+    full_text: "Any coverage for cyber extortion or ransomware payments shall include a mandatory condition requiring the insured to notify law enforcement authorities before any payment is made. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S4.4
+    title: Fines Insurability Condition
+    section: "4.4"
+    full_text: "Coverage for regulatory fines and penalties shall be provided only where insurable by law in the applicable jurisdiction. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S5.1
+    title: Citation Requirements
+    section: "5.1"
+    full_text: "Every clause in a compliant product configuration shall include at least one citation referencing the applicable regulatory source. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S5.2
+    title: Source Validity
+    section: "5.2"
+    full_text: "All citations must reference a valid regulatory source that is active on the proposed policy effective date and applicable to the jurisdiction of issuance. The cited text snippet must be a verbatim extract from the referenced source document. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S6.1
+    title: Consistency of Limits
+    section: "6.1"
+    full_text: "The sum of all first-party coverage sublimits shall not exceed the policy aggregate limit. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S6.2
+    title: Deductible Consistency
+    section: "6.2"
+    full_text: "The deductible amount for any individual coverage shall be strictly less than the coverage limit. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S6.3
+    title: Exclusion Nullification
+    section: "6.3"
+    full_text: "No exclusion shall have the effect of completely nullifying a Required coverage within the same product configuration. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: IRDAI-CYB-G-2024-S6.4
+    title: Duplicate Pattern Codes
+    section: "6.4"
+    full_text: "Each pattern code shall appear at most once within a product configuration to prevent duplicate clause definitions. (curated/illustrative, not legal text)"
+    effective_date: "2024-04-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: CERT-IN-DIR-2022-6HR
+    title: CERT-In 6-Hour Reporting Direction
+    section: "70B(6)"
+    full_text: "All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily report cyber incidents to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. (curated/illustrative, not legal text)"
+    effective_date: "2022-04-28"
+    expiry_date: null
+    jurisdiction: IN

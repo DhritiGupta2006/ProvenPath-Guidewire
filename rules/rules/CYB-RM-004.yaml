@@ -1,0 +1,10 @@
+rule_code: CYB-RM-004
+name: Fines coverage has insurability condition
+layer: RULE_MATCH
+applies_to: "coverage[patternCode=SMCyberRegulatoryFinesCov]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "finesHasInsurabilityCondition"
+source_code: IRDAI-CYB-G-2024-S4.4
+error_template: "Insurability condition missing"

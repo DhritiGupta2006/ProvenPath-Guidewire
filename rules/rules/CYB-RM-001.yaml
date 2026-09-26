@@ -1,0 +1,10 @@
+rule_code: CYB-RM-001
+name: Mandatory coverages present
+layer: RULE_MATCH
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "mandatoryCoveragesPresent"
+source_code: IRDAI-CYB-G-2024-S4.1
+error_template: "Mandatory coverages missing"

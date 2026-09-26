@@ -1,0 +1,10 @@
+rule_code: CYB-CON-004
+name: No duplicate pattern codes
+layer: CONSISTENCY
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "noDuplicatePatternCodes"
+source_code: IRDAI-CYB-G-2024-S6.4
+error_template: "Duplicate pattern code found"

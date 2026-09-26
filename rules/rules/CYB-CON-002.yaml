@@ -1,0 +1,10 @@
+rule_code: CYB-CON-002
+name: Deductible < limit for each coverage
+layer: CONSISTENCY
+applies_to: "coverage[*]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "deductibleLessThanLimit"
+source_code: IRDAI-CYB-G-2024-S6.2
+error_template: "Deductible exceeds limit"

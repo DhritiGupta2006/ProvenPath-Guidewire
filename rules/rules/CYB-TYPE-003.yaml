@@ -1,0 +1,16 @@
+rule_code: CYB-TYPE-003
+name: Existence and category validation
+layer: TYPE
+applies_to: "clause[*]"
+depends_on: []
+logic:
+  operator: AND
+  children:
+    - operator: IN
+      field: "clause.existence"
+      value: ["Required", "Suggested", "Electable", "Preset"]
+    - operator: IN
+      field: "clause.category"
+      value: ["CyberFirstParty", "CyberThirdParty", "CyberExclusion", "CyberRating"]
+source_code: IRDAI-CYB-G-2024-S2.3
+error_template: "Invalid existence {actual} or category"

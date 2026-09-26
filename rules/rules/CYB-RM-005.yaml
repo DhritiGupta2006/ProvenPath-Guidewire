@@ -1,0 +1,10 @@
+rule_code: CYB-RM-005
+name: CERT-In 6-hour notification condition present
+layer: RULE_MATCH
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "certIn6HourConditionPresent"
+source_code: CERT-IN-DIR-2022-6HR
+error_template: "CERT-In 6-hour condition missing"

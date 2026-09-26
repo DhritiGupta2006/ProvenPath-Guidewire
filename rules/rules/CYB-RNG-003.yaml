@@ -1,0 +1,10 @@
+rule_code: CYB-RNG-003
+name: Deductible 1-10% of limit
+layer: RANGE
+applies_to: "coverage[*]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "deductibleInRangeOfLimit"
+source_code: IRDAI-CYB-G-2024-S3.2
+error_template: "Deductible out of 1-10% range"

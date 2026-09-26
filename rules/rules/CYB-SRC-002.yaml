@@ -1,0 +1,10 @@
+rule_code: CYB-SRC-002
+name: Citation source exists, snippet matches, active on date, jurisdiction IN
+layer: SOURCE
+applies_to: "clause[*]"
+depends_on: ["CYB-SRC-001"]
+logic:
+  operator: FN
+  name: "citationSnippetMatchesSource"
+source_code: IRDAI-CYB-G-2024-S5.2
+error_template: "Invalid citation or source"

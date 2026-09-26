@@ -1,0 +1,16 @@
+rule_code: CYB-TYPE-001
+name: Type field validation
+layer: TYPE
+applies_to: "clause[*]"
+depends_on: []
+logic:
+  operator: AND
+  children:
+    - operator: REGEX
+      field: "clause.patternCode"
+      value: "^SMCyber[A-Za-z]+(Cov|Excl)$"
+    - operator: GTE
+      field: "clause.limitMaxInr"
+      value: 0
+source_code: IRDAI-CYB-G-2024-S2.1
+error_template: "Pattern code {actual} invalid or limit negative"

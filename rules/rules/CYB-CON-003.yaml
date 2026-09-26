@@ -1,0 +1,10 @@
+rule_code: CYB-CON-003
+name: No exclusion nullifies a Required coverage
+layer: CONSISTENCY
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "noExclusionNullifiesRequiredCoverage"
+source_code: IRDAI-CYB-G-2024-S6.3
+error_template: "Required coverage nullified by exclusion"

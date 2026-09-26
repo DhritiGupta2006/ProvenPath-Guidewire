@@ -1,0 +1,12 @@
+rule_code: CYB-TYPE-002
+name: Owning entity type validation
+layer: TYPE
+applies_to: "clause[*]"
+depends_on: []
+logic:
+  operator: EQ
+  field: "clause.owningEntityType"
+  value: "GLLine"
+source_code: IRDAI-CYB-G-2024-S2.2
+error_template: "Invalid owning entity type {actual}"
+pc_mapping: "ClausePattern.owningEntityType"

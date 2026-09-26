@@ -1,0 +1,220 @@
+{
+  "proposalId": "PP-DEMO-001",
+  "executionId": "exec-demo-001",
+  "iteration": 2,
+  "line": "SMCyber",
+  "aggregateLimitInr": 5000000,
+  "turnoverInr": 200000000,
+  "minimumPremiumInr": 25000,
+  "targetEffectiveDate": "2026-10-01",
+  "jurisdiction": "IN",
+  "proseSummary": "Cyber insurance for Indian startups with aggregate coverage up to ₹50L. Data breach response and privacy liability coverages of ₹20L each are included as mandatory coverages. Cyber extortion coverage is set at ₹20L with law enforcement notification requirement. Business interruption coverage of ₹10L has a 12 hour waiting period. Regulatory fines coverage of ₹5L is electable where insurable by law. Minimum premium is ₹25,000. The policy applies to enterprises with turnover up to ₹20 Cr.",
+  "llmMeta": {
+    "model": "gemini-2.0-flash",
+    "temperature": 0
+  },
+  "clauses": [
+    {
+      "clauseId": "c-001",
+      "kind": "COVERAGE",
+      "patternCode": "SMCyberDataBreachCov",
+      "name": "Data Breach Response Coverage",
+      "category": "CyberFirstParty",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "limitMaxInr": 2000000,
+      "deductibleInr": 100000,
+      "conditions": [
+        "cert-in-6-hour-reporting"
+      ],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.1",
+          "section": "4.1",
+          "textSnippet": "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages."
+        },
+        {
+          "sourceCode": "CERT-IN-DIR-2022-6HR",
+          "section": "70B(6)",
+          "textSnippet": "All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily report cyber incidents to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-002",
+      "kind": "COVERAGE",
+      "patternCode": "SMCyberPrivacyLiabilityCov",
+      "name": "Privacy Liability Coverage",
+      "category": "CyberThirdParty",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "limitMaxInr": 2000000,
+      "deductibleInr": 100000,
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.1",
+          "section": "4.1",
+          "textSnippet": "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-003",
+      "kind": "COVERAGE",
+      "patternCode": "SMCyberExtortionCov",
+      "name": "Cyber Extortion Coverage",
+      "category": "CyberFirstParty",
+      "owningEntityType": "GLLine",
+      "existence": "Suggested",
+      "limitMaxInr": 2000000,
+      "deductibleInr": 100000,
+      "conditions": [
+        "law-enforcement-notification"
+      ],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S3.4",
+          "section": "3.4",
+          "textSnippet": "The sublimit for Cyber Extortion or Ransomware coverage shall not exceed 50% of the policy aggregate limit to prevent disproportionate exposure to extortion-related claims."
+        },
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.3",
+          "section": "4.3",
+          "textSnippet": "Any coverage for cyber extortion or ransomware payments shall include a mandatory condition requiring the insured to notify law enforcement authorities before any payment is made."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-004",
+      "kind": "COVERAGE",
+      "patternCode": "SMCyberBusinessInterruptionCov",
+      "name": "Business Interruption Coverage",
+      "category": "CyberFirstParty",
+      "owningEntityType": "GLLine",
+      "existence": "Suggested",
+      "limitMaxInr": 1000000,
+      "deductibleInr": 50000,
+      "waitingHours": 12,
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S3.3",
+          "section": "3.3",
+          "textSnippet": "The waiting period for Business Interruption coverage under cyber insurance shall be not less than 8 hours and not more than 72 hours from the time of the qualifying cyber event."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-005",
+      "kind": "COVERAGE",
+      "patternCode": "SMCyberRegulatoryFinesCov",
+      "name": "Regulatory Fines Coverage",
+      "category": "CyberThirdParty",
+      "owningEntityType": "GLLine",
+      "existence": "Electable",
+      "limitMaxInr": 500000,
+      "deductibleInr": 25000,
+      "conditions": [
+        "where-insurable-by-law"
+      ],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.4",
+          "section": "4.4",
+          "textSnippet": "Coverage for regulatory fines and penalties shall be provided only where insurable by law in the applicable jurisdiction."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-006",
+      "kind": "EXCLUSION",
+      "patternCode": "SMCyberWarExcl",
+      "name": "War and State-Sponsored Attacks Exclusion",
+      "category": "CyberExclusion",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.2",
+          "section": "4.2",
+          "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-007",
+      "kind": "EXCLUSION",
+      "patternCode": "SMCyberPriorKnownExcl",
+      "name": "Prior Known Incidents Exclusion",
+      "category": "CyberExclusion",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.2",
+          "section": "4.2",
+          "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-008",
+      "kind": "EXCLUSION",
+      "patternCode": "SMCyberIntentionalActsExcl",
+      "name": "Intentional Acts Exclusion",
+      "category": "CyberExclusion",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.2",
+          "section": "4.2",
+          "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-009",
+      "kind": "EXCLUSION",
+      "patternCode": "SMCyberInfraFailureExcl",
+      "name": "Infrastructure Failure Exclusion",
+      "category": "CyberExclusion",
+      "owningEntityType": "GLLine",
+      "existence": "Required",
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S4.2",
+          "section": "4.2",
+          "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+        }
+      ]
+    },
+    {
+      "clauseId": "c-010",
+      "kind": "RATING",
+      "patternCode": "SMCyberBaseRatingCov",
+      "name": "Base Rating Clause",
+      "category": "CyberRating",
+      "owningEntityType": "GLLine",
+      "existence": "Preset",
+      "factors": {
+        "industryFactor": 1.2,
+        "revenueFactor": 0.8,
+        "securityPostureFactor": 1.5
+      },
+      "conditions": [],
+      "citations": [
+        {
+          "sourceCode": "IRDAI-CYB-G-2024-S3.6",
+          "section": "3.6",
+          "textSnippet": "All rating factors applied in premium calculation for SME Cyber Insurance shall fall within the range of 0.50 to 3.00 inclusive."
+        }
+      ]
+    }
+  ]
+}

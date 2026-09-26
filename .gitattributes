@@ -1,0 +1,5 @@
+*.sh text eol=lf
+*.gs text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf

@@ -1,0 +1,10 @@
+rule_code: CYB-RNG-006
+name: Rating factors 0.5-3.0
+layer: RANGE
+applies_to: "rating[*]"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "ratingFactorsInRange"
+source_code: IRDAI-CYB-G-2024-S3.6
+error_template: "Rating factor out of range"

@@ -1,0 +1,17 @@
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = 'provenpath'
+
+// Track A modules (Verification Core)
+include 'contracts', 'core', 'eval'
+
+// Future modules — teammates will add these later:
+// include 'app'      // Shaurya: Javalin API, Flyway, SSE
+// include 'planner'  // Dhriti: Gemini planner
+// include 'pcexport' // Chinmay: PolicyCenter export
+// include 'pcagent'  // Chinmay: PolicyCenter agent

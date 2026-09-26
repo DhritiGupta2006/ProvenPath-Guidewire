@@ -1,0 +1,16 @@
+rule_code: CYB-RNG-001
+name: Aggregate limit range 5L to 5Cr
+layer: RANGE
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: AND
+  children:
+    - operator: GTE
+      field: "proposal.aggregateLimitInr"
+      value: 500000
+    - operator: LTE
+      field: "proposal.aggregateLimitInr"
+      value: 50000000
+source_code: IRDAI-CYB-G-2024-S3.1
+error_template: "Aggregate limit {actual} out of range 5L-5Cr"

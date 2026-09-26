@@ -1,0 +1,10 @@
+rule_code: CYB-GRD-001
+name: Every number in proseSummary matches a verified value
+layer: GROUNDING
+applies_to: "proposal"
+depends_on: ["CYB-TYPE-001"]
+logic:
+  operator: FN
+  name: "groundingCheck"
+source_code: IRDAI-CYB-G-2024-S5.1
+error_template: "Number in summary not grounded in verified data"
