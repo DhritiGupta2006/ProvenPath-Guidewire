@@ -50,8 +50,48 @@ docker run --rm \
   gradle test --no-daemon
 ```
 
-## Future Modules
-- `app`: Javalin API, Flyway, SSE (Shaurya)
-- `planner`: Gemini planner (Dhriti)
-- `pcexport`: PolicyCenter export (Chinmay)
-- `pcagent`: PolicyCenter agent (Chinmay)
+`gradlew-docker.sh test` skips the `:app` integration tests (they need Postgres). The full suite runs against a throwaway PostgreSQL 16 container:
+
+```bash
+bash backend/test-with-db.sh              # core 34 + app 12 + eval 1 tests
+bash backend/test-with-db.sh test :eval:run
+```
+
+## `:app`: the backend service (`provenpath.app`)
+Javalin 5.6 on JDK 11. It's a single fat jar (`gradle :app:fatJar` → `app/build/libs/provenpath-app.jar`) and **needs a JDK at runtime, not a JRE**: the Gosu 1.18 runtime uses `jdk.compiler`.
+
+| Package | What |
+|---|---|
+| `Main`, `Config`, `Services`, `Server`, `Seeder` | Startup, env config (localhost defaults), wiring, HTTP routes + SSE, idempotent seed (users, sources, rules) |
+| `db` | `Db` (Hikari + Flyway), `Repository` (all SQL), `EmbeddedDb` (`DB_MODE=embedded`) |
+| `events` | `EventBus` (append-only `pp_event_log`, per-execution seq, live fan-out), `ReplayingSubscriber` (subscribe → replay → live, no gaps or duplicates) |
+| `services` | `VerifyService` (the only producer of verdicts; persists runs and nodes and streams them), `ExecutionService` (lifecycle), `ReviewService` (named reviewer gate), `DeploymentService` (write-path gate), `AgentService` (VM agent pull endpoints), `ToolService` (the 4 MCP tools), `QueryService` (detail, rules, replay, provenance, metrics) |
+| `planner.FixturePlanner` | `LLM_MODE=fixture`: the recorded demo proposals through the **real** gate |
+
+**Plug-in points** (loaded by class name, so `:app` never compiles against them):
+- `PLANNER_CLASS` (default `provenpath.planner.Planner`, used when `LLM_MODE=live`) implements `PlannerPort`.
+- `PACKAGE_BUILDER_CLASS` (default `provenpath.pcexport.PackageBuilder`) implements `PackageBuilderPort`. Until it exists, `POST /deployments` answers `503 exporter_unavailable`.
+
+**Deploy gate:** a package is built and queued only if the execution is approved, the approved review targets a PASSED run with a gate token, the stored proposal still hashes to the verified `proposalHash`, the ruleset is unchanged, and the HMAC token verifies. A BLOCKED run can never produce a package.
+
+**Run modes:**
+- Laptops: `docker compose up --build` from the repo root (copy `.env.example` to `.env` first). Smoke test: `bash scripts/smoke.sh`.
+- Guidewire VM (no Docker, no admin): `java -jar provenpath-app.jar` with `DB_MODE=embedded`. The jar starts its own PostgreSQL 16; data lives in `EMBEDDED_PG_DIR` (default `../.provenpath-pgdata`), port `EMBEDDED_PG_PORT` (default 5433). Verified natively on Windows with Temurin 11.0.32 as a non-admin user; the database is UTF8, so ₹ is safe.
+
+| Env var | Default | |
+|---|---|---|
+| `PROVENPATH_GATE_SECRET` | *(required)* | HMAC key for gate tokens; the backend refuses to start without it |
+| `PORT` | 8080 | |
+| `DB_MODE` | external | `embedded` on the VM |
+| `DB_URL` / `DB_USER` / `DB_PASSWORD` | `jdbc:postgresql://localhost:5432/provenpath` / provenpath / provenpath | external mode |
+| `PROVENPATH_RULES_DIR` / `_FIXTURES_DIR` / `_EVAL_DIR` | `../rules` or `./rules` etc. | |
+| `LLM_MODE` | fixture | `live` → `PLANNER_CLASS` |
+| `PC_AGENT_KEY` | *(empty = agent endpoints return 503)* | Bearer token for `/api/v1/pc-agent/*` |
+| `VERIFY_NODE_DELAY_MS` | 150 | Pacing of `verify.node` events for the UI animation |
+| `AGENT_LONG_POLL_MS` | 25000 | |
+
+API: plan §3 and `docs/events.md`. SSE clients must send `Accept: text/event-stream` (browsers' `EventSource` does); `Last-Event-ID` or `?after=N` resumes after seq N.
+
+## Modules still to come
+- `planner`: Gemini planner (Dhriti), see `team/DHRITI.md`
+- `pcexport`, `pcagent`: PolicyCenter package builder and VM agent (Chinmay), see `team/CHINMAY.md`

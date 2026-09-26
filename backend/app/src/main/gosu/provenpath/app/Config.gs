@@ -21,8 +21,15 @@ class Config {
   var _packageBuilderClass : String as readonly PackageBuilderClass
   var _nodeDelayMs : long as readonly NodeDelayMs
   var _agentPollMs : long as readonly AgentPollMs
+  var _dbMode : String as readonly DbMode
+  var _embeddedPgDir : String as readonly EmbeddedPgDir
+  var _embeddedPgPort : int as readonly EmbeddedPgPort
 
   construct() {
+    // external = connect to DB_URL (Docker on laptops); embedded = start a private PostgreSQL from the jar (Guidewire VM)
+    _dbMode = env("DB_MODE", "external").toLowerCase()
+    _embeddedPgDir = new File(env("EMBEDDED_PG_DIR", "../.provenpath-pgdata")).AbsolutePath
+    _embeddedPgPort = Integer.parseInt(env("EMBEDDED_PG_PORT", "5433"))
     _port = Integer.parseInt(env("PORT", "8080"))
     _dbUrl = env("DB_URL", "jdbc:postgresql://localhost:5432/provenpath")
     _dbUser = env("DB_USER", "provenpath")

@@ -1,104 +1,50 @@
-# ProvenPath Event Log Format
+# ProvenPath events (SSE + append-only audit log)
 
-This document details the event log format used by the ProvenPath verification core to emit execution steps during product proposition and verification.
+Every event is appended to `pp_event_log` (a trigger rejects UPDATE/DELETE/TRUNCATE) **before** it is streamed.
 
-## Event Envelope Format
-
-Every event is serialized as a single JSON object per line (JSONL format) with the following structure:
+**Stream:** `GET /api/v1/executions/{id}/stream`
+- Send `Accept: text/event-stream` (browser `EventSource` does this automatically).
+- Every SSE message uses the event name `message`, so `EventSource.onmessage` receives all of them.
+- The SSE `id` is the seq. On reconnect, `Last-Event-ID` (or `?after=N`) resumes with no gaps or duplicates.
+- A new subscriber first gets the **full history from seq 1**, then live events.
+- A comment ping is sent every 15 s.
 
 ```json
-{
-  "executionId": "string",
-  "seq": "integer",
-  "ts": "ISO 8601 timestamp string",
-  "type": "string",
-  "payload": "object"
-}
+{"executionId": "exec-…", "seq": 12, "ts": "2026-09-27T01:50:44.123Z", "type": "verify.node", "payload": { … }}
 ```
 
-- **executionId**: A unique identifier for the entire execution run.
-- **seq**: A monotonically increasing integer sequence starting from 1 for each execution run.
-- **ts**: ISO-8601 formatted timestamp of the event.
-- **type**: The specific event type which defines the schema of the `payload` object.
-- **payload**: The event-specific payload containing details.
+`fixtures/events_demo_run.jsonl` is a **real recorded run** of the demo (`LLM_MODE=fixture`) up to `review.decided`. The `pc.*` tail is a sample in the exact shapes below, until `:pcexport` and the VM agent exist.
 
-## Event Types & Payloads
+## Who emits what
+| Emitter | Types |
+|---|---|
+| Backend (`ExecutionService`, `ToolService`) | `run.started`, `review.requested`, `run.completed` |
+| **Planner** (`FixturePlanner`, or Track C's `provenpath.planner.Planner`) | `planner.step`, `tool.called`, `tool.result`, `planner.repair` |
+| **Verifier** (`VerifyService`, the only producer of verdicts) | `proposal.created`, `verify.started`, `verify.node`, `gate.blocked`, `gate.passed` |
+| Review / deploy gate | `review.decided`, `pc.export`, `pc.queued`, `pc.failed` (export stage) |
+| **VM agent** (via `POST /api/v1/pc-agent/status`) | `pc.pulled` (on claim), `pc.write`, `pc.restart`, `pc.ready`, `pc.verified`, `pc.failed` |
 
-### `run.started`
-Emitted when a new agent run begins.
-- `prompt` (string): The initial user request or prompt.
+## Payloads
+| Type | Payload |
+|---|---|
+| `run.started` | `prompt`, `mode` (`fixture` \| `live` \| `mcp` \| `test`) |
+| `planner.step` | `step`, `action` (tool name), `note`, `mode` |
+| `tool.called` | `tool`, `args` |
+| `tool.result` | `tool`, `result` |
+| `proposal.created` | `proposalId`, `iteration`, `clauses` (count), `aggregateLimitInr` |
+| `verify.started` | `runId`, `iteration`, `proposalId`, `ruleCount` (23), `nodeCount`, `rulesetHash` |
+| `verify.node` | `runId`, `ruleCode`, `clauseId` (null = proposal-level), `layer` (TYPE \| RANGE \| CONSISTENCY \| RULE_MATCH \| SOURCE \| GROUNDING), `result` (PASSED \| FAILED \| SKIPPED \| NEEDS_REVIEW), `expected`, `actual`, `reason`, `sourceCode`. Sent in topological order, `VERIFY_NODE_DELAY_MS` apart. `ruleCode: "UNMATCHED"` marks a clause no rule covers (NEEDS_REVIEW) |
+| `gate.blocked` | `runId`, `iteration`, `verdictHash`, `failedRules[]`, `skippedRules[]`, `needsReviewClauses[]`, `failures[]` (each shaped like a `verify.node` payload), `writtenToPolicyCenter: 0` |
+| `gate.passed` | `runId`, `iteration`, `verdictHash`, `proposalHash`, `rulesetHash`, `nodeCount` |
+| `planner.repair` | `runId` (the blocked run), `iteration` (the next one), `failedRule`, `clauseId`, `expected`, `actual`, `reason` |
+| `review.requested` | `runId`, `iteration`, `verdictHash`, `reviewers[]` (names) |
+| `review.decided` | `runId`, `reviewId`, `decision` (approved \| rejected), `reviewer`, `reviewerId`, `comment` |
+| `pc.export` | `deploymentId`, `runId`, `productCode`, `files` (count), `packageBytes`, `manifestSha256` |
+| `pc.queued` | `deploymentId` |
+| `pc.pulled` | `deploymentId`, `agent` |
+| `pc.write` / `pc.restart` / `pc.ready` / `pc.verified` | `deploymentId`, `detail` (free text from the agent, e.g. elapsed restart time) |
+| `pc.failed` | `deploymentId`, `detail` (agent), or `stage: "export"`, `detail` (backend) |
+| `run.completed` | `status` (`blocked` \| `rejected` \| `deployed` \| `error`), plus `runId` / `iterations` / `deploymentId` / `error` |
 
-### `planner.step`
-Emitted when the planner decides on the next step.
-- `step` (integer): Step number.
-- `action` (string): The intended action.
-
-### `tool.called`
-Emitted when a tool is invoked.
-- `tool` (string): Name of the tool.
-- `args` (object): Arguments passed to the tool.
-
-### `tool.result`
-Emitted when a tool execution completes.
-- `tool` (string): Name of the tool.
-- `result` (string or object): Result of the execution.
-
-### `proposal.created`
-Emitted when a product proposal is constructed.
-- `proposalId` (string): Unique identifier for the proposal.
-- `iteration` (integer): Current iteration number for this proposal.
-
-### `verify.started`
-Emitted when the verification phase begins for a proposal.
-- `runId` (string): Specific verification run identifier.
-- `iteration` (integer): Corresponding proposal iteration.
-- `ruleCount` (integer): Total number of rules to execute.
-
-### `verify.node`
-Emitted for every verification node execution.
-- `ruleCode` (string): Rule identifier.
-- `layer` (string): Verification layer (e.g., TYPE, RANGE, STRUCTURAL, CITATION, CONDITION).
-- `result` (string): Result of verification (`PASSED`, `FAILED`, `SKIPPED`).
-- `reason` (string, optional): Reason for failure or skipping.
-
-### `gate.blocked`
-Emitted when verification fails and blocks deployment.
-- `runId` (string): Verification run ID.
-- `failedRules` (list of strings): List of rules that failed.
-- `skippedRules` (list of strings, optional): List of rules that were skipped due to upstream failures.
-
-### `planner.repair`
-Emitted when the planner identifies a fix for a failed proposal.
-- `failedRule` (string): The primary rule that caused the failure.
-- `reason` (string): The explanation of why it failed and how it needs to be repaired.
-
-### `gate.passed`
-Emitted when a proposal passes all verification rules.
-- `runId` (string): Verification run ID.
-- `verdictHash` (string): Hash of the successful verdict state.
-
-### `review.requested`
-Emitted when a passed proposal is sent for manual or external review.
-- `runId` (string): Verification run ID.
-- `reviewer` (string): Identity of the required reviewer.
-
-### `review.decided`
-Emitted when the review decision is made.
-- `runId` (string): Verification run ID.
-- `decision` (string): Review outcome (`approved`, `rejected`).
-- `reviewer` (string): Identity of the reviewer who made the decision.
-
-### `pc.request`
-Emitted when a request to deploy to PolicyCenter is initiated.
-- `endpoint` (string): PolicyCenter API endpoint.
-- `payload` (object): The request body being sent.
-
-### `pc.response`
-Emitted when the PolicyCenter API responds.
-- `status` (integer): HTTP status code.
-- `message` (string): API response message.
-
-### `run.completed`
-Emitted when the entire execution run is completed.
-- `status` (string): Final status (`success`, `failure`).
-- `iterations` (integer): Total number of iterations executed.
+## Execution status (`GET /api/v1/executions/{id}` → `status`)
+`planning` → `verified_fail` (still blocked) · `review_pending` → `approved` | `rejected` → `deploying` → `deployed` | `deploy_failed` (can be redeployed) · `error`

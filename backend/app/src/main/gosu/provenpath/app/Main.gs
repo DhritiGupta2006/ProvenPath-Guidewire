@@ -2,6 +2,7 @@ package provenpath.app
 
 uses java.util.concurrent.Executors
 uses provenpath.app.db.Db
+uses provenpath.app.db.EmbeddedDb
 
 /** ProvenPath backend. Configuration: see Config (env vars with localhost defaults). */
 class Main {
@@ -13,9 +14,11 @@ class Main {
       System.exit(2)
     }
     var config = new Config()
-    System.out.println("ProvenPath backend: db=" + config.DbUrl + " rules=" + config.RulesDir + " fixtures=" + config.FixturesDir +
+    System.out.println("ProvenPath backend: dbMode=" + config.DbMode + " db=" + (config.DbMode == "embedded" ? config.EmbeddedPgDir : config.DbUrl) + " rules=" + config.RulesDir + " fixtures=" + config.FixturesDir +
         " eval=" + config.EvalDir + " llmMode=" + config.LlmMode)
-    var db = new Db(config.DbUrl, config.DbUser, config.DbPassword)
+    var db = config.DbMode == "embedded"
+        ? EmbeddedDb.start(config.EmbeddedPgDir, config.EmbeddedPgPort)
+        : new Db(config.DbUrl, config.DbUser, config.DbPassword)
     db.migrate()
     var services = new Services(config, db, Executors.newFixedThreadPool(4), null)
     Seeder.seed(services.Repo, services.Loader)

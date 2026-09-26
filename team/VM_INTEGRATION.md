@@ -20,7 +20,7 @@ HARD RULES
 
 STEPS
 1. `git pull` on main and check out the tag v0.9-laptop (or main if newer and green). Build the backend with the Gradle wrapper under Temurin 11: `backend\gradlew.bat test` then build the app + agent jars. All tests must pass here too.
-2. Portable PostgreSQL 16: use C:\ProvenPath-tools\pgsql if present, otherwise download the official Windows zip binaries there (outside the repo); initdb a data dir in C:\ProvenPath-tools\pgdata; start with pg_ctl on port 5432; create the provenpath DB/user from .env. If this fails, switch VM mode to the documented H2 fallback and note it.
+2. Database: NOTHING to install. The backend runs with DB_MODE=embedded (EMBEDDED_PG_DIR=C:\ProvenPath-tools\pgdata, EMBEDDED_PG_PORT=5433): it starts its own private PostgreSQL 16 from binaries inside the jar, as Student, and never touches PolicyCenter's H2 database. The first start extracts the binaries (~20 s); check for the log line "Embedded PostgreSQL running".
 3. Web: `npm ci --registry=https://registry.npmjs.org` and `npm run build` in web/, with NEXT_PUBLIC_API_URL=http://localhost:8080.
 4. Start everything with `vm\start-all.cmd` (backend :8080, web :3000, agent). Check: GET http://localhost:8080/health, http://localhost:3000 loads, the agent logs "polling".
 5. PC: start it with gwb.bat runServer if it isn't running; wait for http://localhost:8180/pc; record the boot time.

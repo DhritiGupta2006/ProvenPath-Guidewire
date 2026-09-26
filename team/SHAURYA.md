@@ -2,6 +2,15 @@
 
 **Branch:** `track-a/*` · **Master plan:** `12_BUILD_PLAN_2_DAYS.md` · **Owns:** `backend/contracts`, `backend/core`, `backend/eval`, `backend/app`, `fixtures/`, `docs/events.md`
 
+> ✅ **Status (Day 0, done early):** the whole Track A build list is on `main`.
+> - Core: 23 rules, 6 checks, gate, HMAC token.
+> - `:app`: API, Flyway, append-only event log, SSE (subscribe → replay → live), review gate, deploy gate, VM agent endpoints, replay, provenance, metrics, the 4 MCP tools.
+> - Eval: 0/6 false-pass.
+> - Dockerfile + compose, and `DB_MODE=embedded` for the VM.
+> - Tests: core 34 + app 12 (real Postgres) + eval 1, all green. Run `bash backend/test-with-db.sh` and `bash scripts/smoke.sh`.
+>
+> What remains for Shaurya is integration support: wire Dhriti's `:planner` (`LLM_MODE=live`) and Chinmay's `:pcexport` (`PackageBuilderPort`) when they land, grow the eval corpus to 40+ with Dhriti, and bug-fix. See `backend/README.md` and `docs/events.md`.
+
 > **Status:** agy is building the first cut of `:contracts`, `:core`, `:eval`, the rules seed and the fixtures on branch `track-a/core`. Your first job on Day 1 is to review it, get it green, and merge it.
 
 ## Checklist

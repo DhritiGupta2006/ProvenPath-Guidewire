@@ -89,6 +89,9 @@ project(':app') {
         implementation 'org.postgresql:postgresql:42.7.3'
         implementation 'com.zaxxer:HikariCP:5.1.0'
         implementation 'org.flywaydb:flyway-core:9.22.3'
+        // DB_MODE=embedded: a private PostgreSQL 16 started from the jar (Guidewire VM: no Docker, no admin, no install).
+        implementation 'io.zonky.test:embedded-postgres:2.2.2'
+        implementation enforcedPlatform('io.zonky.test.postgres:embedded-postgres-binaries-bom:16.15.0')
     }
 
     test {

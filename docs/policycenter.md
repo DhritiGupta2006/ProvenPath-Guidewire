@@ -39,7 +39,7 @@ College Wi-Fi blocks tunnels and port forwarding, and the VM can't run Docker. S
 ```
 LAPTOPS (dev mode)                    GitHub                  VM (integration + demo, all native, all localhost)
 docker compose up (db, backend, web) ── push ─► main ─ pull ─► vm\start-all.cmd
-agent tested against a local folder                            ├─ portable PostgreSQL 16   :5432  (C:\ProvenPath-tools\pgsql, no admin)
+agent tested against a local folder                            ├─ (PostgreSQL 16 embedded in the backend jar: DB_MODE=embedded, :5433, data in C:\ProvenPath-tools\pgdata)
                                                                ├─ backend jar, Temurin 11  :8080
                                                                ├─ web (next start)         :3000
                                                                ├─ pcagent ─► long-poll localhost:8080 → verify HMAC + sha256

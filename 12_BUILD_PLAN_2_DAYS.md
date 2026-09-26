@@ -22,7 +22,7 @@
 | Product line | **Cyber Insurance for SMEs** (`SMCyber`) | Every doc already assumes it |
 | PolicyCenter | **Real PolicyCenter 10** (10.2.1, `01_OVERVIEW.md`). **No mock.** | We're building the real product |
 | Where PC runs | **The Guidewire-provided cloud VM** (AWS EC2, Windows Server 2022, 4 vCPU, 31 GB RAM, about 17 GB free). PolicyCenter **10.2.1.1711**, Gosu **1.14.26**, at `C:\GW10\PolicyCenter`, H2 dev DB. Start: `gwb.bat runServer`, stop: `gwb.bat stopServer`, `http://localhost:8180/pc`, login `su`/`gw`. PC's JDK is Amazon Corretto 11.0.17 (`JAVA_HOME`, **don't change it**). **No Docker on the VM** (Windows Server, non-admin `Student` user, no WSL distro). All facts: `docs/policycenter.md` | Verified by the VM setup report |
-| **Where ProvenPath runs** | **Two modes, same code.** **Dev mode:** laptops, `docker compose up` (Postgres + backend + web), fixtures, `git push`. **VM mode (integration + demo):** on the VM, `git pull`, then `vm\start-all.cmd` runs everything **natively as `Student`**: portable PostgreSQL 16 (zip binaries, `initdb`/`pg_ctl`, no admin) · backend jar on Temurin 11 · `next start` on Node 20 · the PC agent. **Everything talks over `localhost`** | College Wi-Fi blocks tunnels and port forwarding, and the VM can't run Docker. **GitHub is the only link**, and it works from both sides. No tunnel, no inbound ports, no laptop-to-VM traffic |
+| **Where ProvenPath runs** | **Two modes, same code.** **Dev mode:** laptops, `docker compose up` (Postgres + backend + web), fixtures, `git push`. **VM mode (integration + demo):** on the VM, `git pull`, then `vm\start-all.cmd` runs everything **natively as `Student`**: the backend jar with `DB_MODE=embedded` (it starts its **own private PostgreSQL 16 from binaries bundled in the jar**: no install, no admin; verified natively on Windows with Temurin 11.0.32; it never touches PolicyCenter's H2) · backend jar on Temurin 11 · `next start` on Node 20 · the PC agent. **Everything talks over `localhost`** | College Wi-Fi blocks tunnels and port forwarding, and the VM can't run Docker. **GitHub is the only link**, and it works from both sides. No tunnel, no inbound ports, no laptop-to-VM traffic |
 | How ProvenPath reaches PC | Same process design, all on localhost. The **ProvenPath PC Agent** (`:pcagent`, a fat jar, Temurin 11 at `C:\Users\Student\AppData\Local\Programs\temurin-11`, run from a console window, not a service) long-polls `http://localhost:8080/api/v1/pc-agent/next`, **verifies the HMAC gate token and every file sha256 itself**, backs up the old files, installs the new ones, stops and starts PC (`gwb.bat stopServer` / `runServer` as child processes with logs), checks `ProductModelAPI` on `localhost:8180`, and posts status back | Keeps the security story: *"PC only accepts signed, reviewer-approved packages, re-verified by a separate process"* |
 | Building on the VM | **Gradle wrapper** (`backend/gradlew.bat`) run with `JAVA_HOME` set to Temurin 11 **only inside our scripts** (PC's global `JAVA_HOME` stays Corretto). npm always uses `--registry=https://registry.npmjs.org` (the VM's `.npmrc` points at Guidewire Artifactory). Maven, Gradle, npm, Gemini and GitHub are all reachable from the VM | No Docker needed on the VM |
 | No-network fallback | The agent also watches `C:\provenpath\inbox`, and dropping a package zip there works the same way | Also useful for testing the agent alone |
@@ -54,7 +54,7 @@ We keep invariant 4:
 | Risk | Owner | Mitigation |
 |---|---|---|
 | PC boot/restart time is unknown (PC is currently stopped) | Chinmay | First hour of Day 1: `gwb.bat runServer`, then time the boot and one stop/start. If it's too slow for the live demo, keep a pre-deployed PC as backup |
-| Stack doesn't run natively on the VM (portable Postgres, Gradle wrapper, npm registry) | Chinmay | Dry run **by D1 18:00** with the Track A code already on `main`: portable Postgres up, `gradlew.bat test` green on the VM, `next build` works. If portable Postgres fails, switch the backend DB URL to an embedded H2 file DB in PostgreSQL mode, for VM mode only |
+| Stack doesn't run natively on the VM (embedded Postgres, Gradle wrapper, npm registry) | Chinmay | Dry run **by D1 18:00** with the Track A code already on `main`: portable Postgres up, `gradlew.bat test` green on the VM, `next build` works. Embedded Postgres (`DB_MODE=embedded`) was already verified natively on Windows as a non-admin user; if it still fails on the VM, the fallback is an H2 file DB for VM mode only (SQL port needed) |
 | VM session ends and kills the console processes | Chinmay | Disconnect the RDP/remote session instead of signing out; `start-all.cmd` is idempotent, so just re-run it |
 | One VM, four people | Everyone | Only Chinmay (plus agy on the VM) changes PC. Everyone else uses PC only through ProvenPath. Back up `modules/configuration` before the first deploy |
 | PC restart takes minutes, which is awkward live | Chinmay | Demo: approve → deploy starts the restart → talk through metrics and replay (about 2 min) → open PC. Keep a pre-deployed PC as the backup |
@@ -72,7 +72,7 @@ We keep invariant 4:
 |---|---|---|
 | **A — Verification Core + Backend App (Gosu)**, tech lead | **Shaurya** | `:contracts`, `:core` (engine, 5 layers + grounding, gate, token), `:eval`; **`:app`** (Javalin API, Flyway DB, append-only event log, SSE, review workflow, replay, provenance, metrics) |
 | **B — Real PolicyCenter Integration (Gosu)** | **Chinmay** (works on the Guidewire cloud VM) | PC on the VM (setup already done), hand-built SMCyber v0 in PC, `:pcexport` (Proposal → overlay package + signed manifest), backend `pc-agent` endpoints, **`:pcagent` on the VM** (pull → verify → install → restart → ProductModelAPI verify → report), PC-side Gosu validation gate, SubmissionAPI, docker-compose (dev) and **`vm\` native run scripts** (portable Postgres, Gradle wrapper, `start-all.cmd` / `stop-all.cmd`) |
-| **C — AI Layer & Rule Content** | **Dhriti** | `rules/` (22 rules + sources), `:planner` (Gemini, repair loop), `shared/tools`, Next.js MCP route, eval corpus |
+| **C — AI Layer & Rule Content** | **Dhriti** | `rules/` (23 rules + sources), `:planner` (Gemini, repair loop), `shared/tools`, Next.js MCP route, eval corpus |
 | **D — Mission Control (Next.js)** + pitch deck | **Vaishnavi** | `web/`: live trace, DAG, tools, blocked card, reviewer, **PC deploy progress + "Open in PolicyCenter"**, provenance, metrics, replay, tamper |
 
 > ⚠️ PolicyCenter exists **only on the Guidewire cloud VM**. Chinmay needs VM access from hour 1. Whoever holds the VM credentials shares them **privately**, not in the group chat.
@@ -84,7 +84,7 @@ We keep invariant 4:
 ```
 LAPTOPS (dev mode)                     GitHub               GUIDEWIRE CLOUD VM (VM mode = integration + demo, all native, all localhost)
 docker compose up --build   ── git push ──► main ── git pull ──►  vm\start-all.cmd
- ├─ db       postgres:16                                          ├─ portable PostgreSQL 16         :5432
+ ├─ db       postgres:16                                          ├─ (embedded PostgreSQL 16 inside the backend jar, :5433)
  ├─ backend  Gosu/JDK11  :8080                                    ├─ backend jar (Temurin 11)       :8080 ◄─┐ long-poll
  └─ web      Next.js     :3000                                    ├─ web  (next start, Node 20)     :3000   │
   (fixtures, no PC)                                               ├─ pcagent (Temurin 11) ──────────────────┘
@@ -178,7 +178,7 @@ Seed users: *"A. Mehta — Compliance Reviewer"*, *"PM Demo"*. The dropped table
 
 ---
 
-## 5. The rule set: 22 IRDAI-style curated rules
+## 5. The rule set: 23 IRDAI-style curated rules
 
 These are curated parameters, not legal advice. The only real anchor is the CERT-In 6-hour reporting direction (2022).
 
@@ -204,7 +204,7 @@ These are curated parameters, not legal advice. The only real anchor is the CERT
 | **09:00–10:30** | Review/merge agy's Track A output (contracts, core, rules seed, fixtures). Freeze contracts. Push `main` | **PC on the VM ⭐** (setup, backup and tools are already done; see `docs/policycenter.md`): `gwb.bat runServer`, time the boot and one stop/start, log in `su`/`gw`, open New Submission. Fill the TODOs in `docs/policycenter.md`. Add the **Gradle wrapper** and start `vm` scripts: download the portable PostgreSQL 16 zip to `C:ProvenPath-toolspgsql` (outside the repo), `initdb`, `pg_ctl start` | Review rules seed + `sources.yaml`, tighten wording, make citations exact | `create-next-app`, Dockerfile, layout, `lib/contracts.ts` |
 | **10:30** | **CP0: contracts + skeleton on `main`; `docker compose up --build` runs db + backend + web** | | | |
 | **10:30–13:30** | `:app`: Javalin, Flyway `V1__init.sql` + append-only trigger, DAO, seed loader | **Hand-build SMCyber v0 in real PC:** `products/SMCyber/SMCyber.xml`, 3 coverage patterns on `GLLine` (Data Breach, Extortion, Business Interruption) with `<CovTerms>` (limit/deductible `OptionCovTermPattern` / `DirectCovTermPattern`, money), `AvailabilityScript` on product code, display keys. Rebuild → New Submission → SMCyber shows the coverages | `shared/tools/*.json`; start `:planner` GeminiClient | `useExecutionStream` + dev SSE replay of `fixtures/events_demo_run.jsonl` |
-| **13:30** | **CP1: each track runs on its own. PC is up on the VM with a measured restart time; portable Postgres runs on the VM.** | | | |
+| **13:30** | **CP1: each track runs on its own. PC is up on the VM with a measured restart time; the backend jar runs on the VM with `DB_MODE=embedded`.** | | | |
 | **14:00–18:00** | Event bus → `pp_event_log` → SSE (subscribe-then-replay); `POST /executions`, `/verify`, `/rules`, `/tools/{name}`, `/reviews`; wire `:core` into `VerifyService` (emit `verify.node` in topological order) | Copy **our** v0 files into `policycenter/overlay-template/` (only files we wrote). `:pcexport`: Proposal → overlay files from the template + `PcManifest` (sha256s, termRanges from the RANGE rules). Golden test: fixed fixture → the same structure as v0 | `:planner`: tool loop → `Proposal`, `planner.*`/`tool.*` events, `FixturePlanner` | React Flow DAG from `/rules`, live colors, trace, tools panel |
 | **18:00** | **CP2 ⭐ walking skeleton:** fixture run → Gosu gate → SSE → UI graph turns red on RNG-002. **And SMCyber v0 is visible in real PC, and `vmstart-all.cmd` runs the Track A backend natively on the VM.** Merge everything. | | | |
 | **19:00–23:00** | Review workflow state machine; `/replay`, `/provenance`, `/metrics`; `planner` wiring via `VerifyPort`/`EventPort` | Backend `/pc-agent/next` + `/pc-agent/status`. **`:pcagent`** (fat jar), **built and tested on the laptop**: `PC_HOME` points at a local test folder and `PC_STOP_CMD`/`PC_START_CMD`/`PC_URL` come from config, so the whole pull → verify → back up → write → restart → report loop runs without PC. On the VM those same settings point at the real `gwb.bat` and `localhost:8180` | Live Gemini path, validation → retry → fixture; RAG-lite; **MCP route** in `web/` | Blocked card, reviewer panel, switch to the real backend |
@@ -240,7 +240,7 @@ These are curated parameters, not legal advice. The only real anchor is the CERT
 
 ## 7. Definition of done
 
-- **A:** 22 rules, all 6 checks tested, blocked/fixed fixtures behave correctly, false-pass = 0 with the denominator, 50/50 identical hashes. The API, SSE with full history, append-only log, review and replay all work.
+- **A:** 23 rules, all 6 checks tested, blocked/fixed fixtures behave correctly, false-pass = 0 with the denominator, 50/50 identical hashes. The API, SSE with full history, append-only log, review and replay all work.
 - **B:** SMCyber shows up in **real** PC's New Submission after a ProvenPath deploy. `ProductModelAPI` confirms it. BLOCKED writes 0 files. An over-limit value in the PC UI is rejected with the rule code. The repo contains **zero Guidewire files**.
 - **C:** The live planner produces a valid proposal, repair reaches PASSED in ≤2 iterations, fixture mode works offline, the MCP tools work in Inspector, and the corpus has ≥40 items.
 - **D:** The whole demo is driven from the browser plus the PC tab. Deploy progress is live, metrics show denominators, and replay and tamper work.
@@ -251,7 +251,7 @@ These are curated parameters, not legal advice. The only real anchor is the CERT
 2. Replay animation (keep the hash re-verify).
 3. MCP route (use a slide).
 4. Stretch B items (SubmissionAPI, startup hash check, rating).
-5. Portable Postgres fails on the VM → an embedded H2 file DB (PostgreSQL mode), VM mode only.
+5. Embedded Postgres fails on the VM → an H2 file DB for VM mode only (needs a SQL port; last resort).
 6. Live PC restart during the demo → pre-deployed PC plus a recorded deploy clip.
 7. Gosu planner → TypeScript planner in Next.js.
 
@@ -274,7 +274,7 @@ These are curated parameters, not legal advice. The only real anchor is the CERT
 | "What if someone edits PC directly?" | Type an over-limit value in PC → the Gosu gate inside PC rejects it with the rule code |
 | "Is this scripted?" | Replay → identical hash. Type a fresh prompt |
 | "Why Gosu?" | The same language runs inside PolicyCenter. Our gate *is* a PC plugin |
-| "Only 22 rules / only GL line?" | Deliberate scope. Roadmap: a dedicated `SMCyberLine` via APD, real IRDAI ingestion |
+| "Only 23 rules / only GL line?" | Deliberate scope. Roadmap: a dedicated `SMCyberLine` via APD, real IRDAI ingestion |
 | "Legal sign-off?" | No. It's a rule-graph verdict plus a named reviewer. The footer says so |
 
 ### Demo beat owners
