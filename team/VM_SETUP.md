@@ -49,4 +49,4 @@ Contains NO secrets. Finally print the Summary verdict and the "needs a human" l
 3. Do the logins yourself:
    - GitHub via `gh auth login` with a **fine-grained token scoped to this repo only**. Revoke it after the hackathon.
    - `claude` login.
-4. If Docker works on the VM, the plan switches to "stack on the VM". The laptop + tunnel setup is only the fallback.
+4. **Result (Day 0):** Docker is not possible on the VM, and college Wi-Fi blocks tunnels. So we build on laptops and do the final integration natively on the VM; see `team/VM_INTEGRATION.md`.

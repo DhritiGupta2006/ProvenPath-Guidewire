@@ -35,6 +35,7 @@ I own TRACK A: verification core + backend app. Principle: the LLM never produce
 - Review state machine: verified_pass → review_pending → approved/rejected → deployed, each transition an event.
 - backend/Dockerfile multi-stage eclipse-temurin:11-jdk → 11-jre.
 - Keep :planner and :pcexport depending ONLY on :contracts (compile-time boundary).
+- Config ONLY from env vars with localhost defaults (DB_URL, PROVENPATH_RULES_DIR, GEMINI_API_KEY, PROVENPATH_GATE_SECRET, PC_AGENT_KEY): the same jar runs in Docker on laptops AND natively on the Guidewire VM (Temurin 11, portable Postgres, no Docker). Build a runnable fat jar for :app.
 
 Rules: merge to main at checkpoints (D1 10:30, 13:30, 18:00, 23:00; D2 12:30, 15:00 freeze). main must always run `docker compose up --build`. No AI co-author lines in commits. The repo is PUBLIC — never commit Guidewire/PolicyCenter files, jars or images. Rule values are curated/illustrative, not legal advice.
 ```
