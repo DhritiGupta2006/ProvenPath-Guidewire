@@ -16,7 +16,7 @@
 ```
 You are helping me build ProvenPath (hackathon, 2 days, 4 people). Repo: https://github.com/shauryaaojha/ProvenPath-Guidewire. READ FIRST: 12_BUILD_PLAN_2_DAYS.md (master plan — follow exactly), team/VAISHNAVI.md, docs/events.md, backend/contracts (data shapes), fixtures/events_demo_run.jsonl.
 
-STACK: frontend Next.js (App Router) + TypeScript + Tailwind + React Flow (@xyflow/react), in Docker (node:20-alpine). Backend = Gosu service at http://localhost:8080 (SSE at /api/v1/executions/{id}/stream). Deployment target = a REAL Guidewire PolicyCenter 10 at http://localhost:8180/pc (no mock). Build against fixtures FIRST so I never wait on the backend.
+STACK: frontend Next.js (App Router) + TypeScript + Tailwind + React Flow (@xyflow/react), in Docker (node:20-alpine). Backend = Gosu service at http://localhost:8080 (SSE at /api/v1/executions/{id}/stream). Deployment target = a REAL Guidewire PolicyCenter 10 on a Guidewire cloud VM (no mock); the ProvenPath agent on the VM pulls approved packages and reports pc.pulled/write/restart/ready/verified/failed. Build against fixtures FIRST so I never wait on the backend.
 
 I own TRACK D — Mission Control UI in web/ (do not touch web/app/api/mcp — Dhriti owns it).
 
@@ -27,7 +27,7 @@ I own TRACK D — Mission Control UI in web/ (do not touch web/app/api/mcp — D
 5. Trace timeline (planner.*, tool.*, gate.*, review.*, pc.*) + tools panel (click → collapsible input/output JSON).
 6. BLOCKED card on gate.blocked: rule code, layer, expected vs actual, reason, cited source text, banner "BLOCKED — nothing written to PolicyCenter".
 7. Reviewer panel on review.requested: reviewer dropdown ("A. Mehta — Compliance Reviewer"), clause list with provenance (rule → source), Approve / Reject (comment required on reject) → POST /api/v1/reviews. Must look like a real gate, not decoration.
-8. PolicyCenter deploy panel: "Deploy to PolicyCenter" (POST /api/v1/deployments) → live stepper from pc.export → pc.write → pc.restart (show elapsed time, PC restarts take minutes) → pc.ready → pc.verified / pc.failed; generated file list + provenpath-manifest.json viewer (verdictHash, gateToken, reviewer, termRanges); "Open in PolicyCenter" button → NEXT_PUBLIC_PC_URL.
+8. PolicyCenter deploy panel: "Deploy to PolicyCenter" (POST /api/v1/deployments) → live stepper from pc.export → pc.queued → pc.pulled → pc.write → pc.restart (show elapsed time, PC restarts take minutes) → pc.ready → pc.verified / pc.failed; generated file list + provenpath-manifest.json viewer (verdictHash, gateToken, reviewer, termRanges); "Open in PolicyCenter" button → NEXT_PUBLIC_PC_URL (the VM URL, opened by whoever has VM access).
 9. Provenance drawer (GET /api/v1/provenance/{clauseId}), Metrics panel (GET /api/v1/metrics — accuracy, FALSE-PASS highlighted with target 0%, false-block, provenance completeness, ALWAYS with denominators like "0 / 20"), before/after slider ("~3 weeks manual" vs measured run.started → pc.verified).
 10. Replay: event-log playback at 3× + "Re-verify" (POST /api/v1/executions/{id}/replay) → "verdict hash identical ✔". Tamper button: POST /api/v1/verify with a fake-citation proposal → SOURCE-layer block shown.
 11. Loading/error states; footer everywhere: "Rule-graph verdict against a curated constraint set. Not a legal opinion."
