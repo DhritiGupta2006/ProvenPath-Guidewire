@@ -59,7 +59,45 @@ Wait for log line: `INFO Server.RunLevel ***** PolicyCenter ready *****`.
 
 ---
 
-## 3. Term Limits & Bounds Convention
+## 3. Install Steps on the PC Side (Configuration Edits)
+
+Guidewire base PCF files are proprietary code and must not be committed to the public git repository. Instead, the VM installer / deployment agent performs a surgical, non-invasive one-line modification directly on the VM.
+
+### Machine-Readable Definition
+The modification is codified in `policycenter/overlay-template/pc-edits.json`:
+```json
+[
+  {
+    "action": "replaceAttr",
+    "file": "modules/configuration/config/web/pcf/line/gl/job/LineWizardStepSet.GeneralLiability.pcf",
+    "match": "mode=\"GeneralLiability\"",
+    "from": "mode=\"GeneralLiability\"",
+    "to": "mode=\"GeneralLiability|SMCyber\"",
+    "value": "mode=\"GeneralLiability|SMCyber\""
+  }
+]
+```
+
+### Manual / Scripted Application
+1. **Target File**:
+   `C:\GW10\PolicyCenter\modules\configuration\config\web\pcf\line\gl\job\LineWizardStepSet.GeneralLiability.pcf`
+2. **Backup**:
+   Create a backup before editing (e.g. `C:\ProvenPath-backup\005\LineWizardStepSet.GeneralLiability.pcf.orig`).
+3. **Edit**:
+   Change Line 7:
+   - **Before**: `mode="GeneralLiability"`
+   - **After**: `mode="GeneralLiability|SMCyber"`
+4. **PowerShell Snippet**:
+   ```powershell
+   $path = "C:\GW10\PolicyCenter\modules\configuration\config\web\pcf\line\gl\job\LineWizardStepSet.GeneralLiability.pcf"
+   (Get-Content $path) -replace 'mode="GeneralLiability"', 'mode="GeneralLiability|SMCyber"' | Set-Content $path
+   ```
+
+Guidewire's PCF compiler natively supports pipe-delimited values in the `mode` attribute (`modules/pcf.xsd`). This routes `SMCyber` submissions through the GL Line Wizard step set (`Locations`, `CoveragesScreen`, `Exposures`, `Modifiers`) while leaving `GeneralLiability` and `CommercialPackage` completely untouched.
+
+---
+
+## 4. Term Limits & Bounds Convention
 
 Direct coverage term patterns (`DirectCovTermPattern`) support native range enforcement via attributes on `<CovTermLimits>`:
 - **`minVal`**: Minimum permissible numeric value (e.g. `minVal="0"`).
@@ -88,20 +126,25 @@ In `SMCyberExtortionCov.xml`:
 
 ---
 
-## 4. Uninstallation Steps
+## 5. Uninstallation Steps
 
 1. Stop PolicyCenter:
    ```cmd
    cd C:\GW10\PolicyCenter
    gwb.bat stopServer
    ```
-2. Remove the 8 new files:
+2. Revert PCF edit:
+   ```powershell
+   $path = "C:\GW10\PolicyCenter\modules\configuration\config\web\pcf\line\gl\job\LineWizardStepSet.GeneralLiability.pcf"
+   (Get-Content $path) -replace 'mode="GeneralLiability\|SMCyber"', 'mode="GeneralLiability"' | Set-Content $path
+   ```
+3. Remove the 8 new product model XML files:
    ```powershell
    Remove-Item -Recurse -Force "C:\GW10\PolicyCenter\modules\configuration\config\resources\productmodel\products\SMCyber"
    Remove-Item -Force "C:\GW10\PolicyCenter\modules\configuration\config\resources\productmodel\policylinepatterns\GLLine\coveragepatterns\SMCyber*"
    ```
-3. Remove the marked fragment from `modules/configuration/config/locale/productmodel.display.properties` (or restore from backup).
-4. Restart PolicyCenter:
+4. Remove the marked fragment from `modules/configuration/config/locale/productmodel.display.properties` (or restore from backup).
+5. Restart PolicyCenter:
    ```cmd
    cd C:\GW10\PolicyCenter
    gwb.bat runServer

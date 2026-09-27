@@ -1,0 +1,10 @@
+[
+  {
+    "action": "replaceAttr",
+    "file": "modules/configuration/config/web/pcf/line/gl/job/LineWizardStepSet.GeneralLiability.pcf",
+    "match": "mode=\"GeneralLiability\"",
+    "from": "mode=\"GeneralLiability\"",
+    "to": "mode=\"GeneralLiability|SMCyber\"",
+    "value": "mode=\"GeneralLiability|SMCyber\""
+  }
+]
