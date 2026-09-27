@@ -1,0 +1,25 @@
+# >>> ProvenPath SMCyber >>>
+Product_SMCyber.Name = SME Cyber Insurance
+Product_SMCyber.Description = SME Cyber Insurance
+
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.Name = Data Breach Response
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.Description = Data Breach Response
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.CovTerm_SMCyberDataBreachLimit.Name = Data Breach Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.CovTerm_SMCyberDataBreachLimit.Description = Data Breach Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.CovTerm_SMCyberDataBreachDeductible.Name = Data Breach Deductible
+PolicyLine_GLLine.CoveragePattern_SMCyberDataBreachCov.CovTerm_SMCyberDataBreachDeductible.Description = Data Breach Deductible
+
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.Name = Cyber Extortion / Ransomware
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.Description = Cyber Extortion / Ransomware
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.CovTerm_SMCyberExtortionLimit.Name = Cyber Extortion Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.CovTerm_SMCyberExtortionLimit.Description = Cyber Extortion Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.CovTerm_SMCyberExtortionDeductible.Name = Cyber Extortion Deductible
+PolicyLine_GLLine.CoveragePattern_SMCyberExtortionCov.CovTerm_SMCyberExtortionDeductible.Description = Cyber Extortion Deductible
+
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.Name = Business Interruption
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.Description = Business Interruption
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.CovTerm_SMCyberBILimit.Name = Business Interruption Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.CovTerm_SMCyberBILimit.Description = Business Interruption Limit
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.CovTerm_SMCyberBIWaitingHours.Name = Waiting Period (Hours)
+PolicyLine_GLLine.CoveragePattern_SMCyberBusinessInterruptionCov.CovTerm_SMCyberBIWaitingHours.Description = Waiting Period (Hours)
+# <<< ProvenPath SMCyber <<<

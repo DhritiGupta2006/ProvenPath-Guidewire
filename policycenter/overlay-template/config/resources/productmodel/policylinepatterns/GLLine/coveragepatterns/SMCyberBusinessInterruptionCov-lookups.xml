@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<import>
+  <CoverageLookup public-id="SMCyberBusinessInterruptionCovLookup">
+    <Availability>Available</Availability>
+    <CoveragePatternCode>SMCyberBusinessInterruptionCov</CoveragePatternCode>
+    <EndEffectiveDate/>
+    <PolicyLinePatternCode>GLLine</PolicyLinePatternCode>
+    <StartEffectiveDate>2000-01-01 00:00:00.000</StartEffectiveDate>
+    <State/>
+    <UWCompanyCode/>
+  </CoverageLookup>
+  <CovTermLookup public-id="SMCyberBILimitLookup">
+    <Availability>Available</Availability>
+    <CovTermPatternCode>SMCyberBILimit</CovTermPatternCode>
+    <EndEffectiveDate/>
+    <PolicyLinePatternCode>GLLine</PolicyLinePatternCode>
+    <StartEffectiveDate>2000-01-01 00:00:00.000</StartEffectiveDate>
+    <State/>
+    <UWCompanyCode/>
+  </CovTermLookup>
+  <CovTermLookup public-id="SMCyberBIWaitingHoursLookup">
+    <Availability>Available</Availability>
+    <CovTermPatternCode>SMCyberBIWaitingHours</CovTermPatternCode>
+    <EndEffectiveDate/>
+    <PolicyLinePatternCode>GLLine</PolicyLinePatternCode>
+    <StartEffectiveDate>2000-01-01 00:00:00.000</StartEffectiveDate>
+    <State/>
+    <UWCompanyCode/>
+  </CovTermLookup>
+</import>
