@@ -24,3 +24,9 @@ comms/from-vm/NNN-<topic>-report.md report for that task    (written by the VM a
 - Never change the global `JAVA_HOME` (PolicyCenter uses Corretto). Use Temurin 11 in-session only.
 - No logins, no reboots.
 - The VM agent commits **only** under `comms/from-vm/`, plus `policycenter/` when a task explicitly asks for files we author there. `scripts/vm-check-staged.sh` enforces this.
+
+## Evidence rule (added after report 005)
+Every result in a report must be labelled **[OBSERVED]** (you ran it and saw the output: command, log line, HTTP response, screenshot) or **[INFERRED]** (from code, config or reasoning).
+- Never describe UI screens, field names, error texts or behaviour as fact unless you saw them. If you can't drive the UI, write a click-path and mark the expected result `[INFERRED]`.
+- Report 005's UI section named terms that don't exist in our coverages. A human verifies the UI; your job is accurate labels.
+- Use `Status: DONE | PARTIAL | BLOCKED` only.

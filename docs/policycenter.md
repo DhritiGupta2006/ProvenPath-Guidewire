@@ -80,3 +80,10 @@ Product `SMCyber` plus 3 coverages on `GLLine` (`SMCyberDataBreachCov` Required,
 **⚠️ The first install's restart took 22 m 17 s** (the new product-model XML triggered a full `compileGosu` of 29,489 classes). A no-change warm restart is 3 m 32 s. VM task 004 measures a values-only change; the answer decides live deploy vs. pre-deploy in the demo.
 
 Not yet observed by a human: the SMCyber coverages screen in New Submission, and that they stay off General Liability.
+
+## VM tasks 004–005 results
+- **Restart cost:** first install of new pattern files 22 m 17 s (full `compileGosu`) · **values-only XML change 3 m 54 s** (`compileGosu` UP-TO-DATE) · PCF attribute change 5 m 29 s · no change 3 m 31 s. `gwb.bat runServer -x compile` skips compiling (Guidewire's own hint).
+- **Demo design:** pre-deploy the SMCyber pattern set before the demo. A live deploy that changes only values (e.g. the verified caps) is technically ~4 min and can run during the metrics/replay talk, but it's optional.
+- **PC-native limit:** `SMCyberExtortionLimit` has `minVal=0 maxVal=2500000`; PC validates Direct cov terms via `CovTermDirectInputSetHelper.validate` → `validateValueInRange` (display key `Java.Validation.Number.Range.Closed`). The exact on-screen message still needs a human check.
+- **Currency:** no INR (usd, eur, gbp, cad, aud, rub, jpy; default usd). INR needs a `Currency.ttx` typelist extension plus a rebuild.
+- **Wizard:** one-line PCF edit `LineWizardStepSet.GeneralLiability.pcf` `mode="GeneralLiability|SMCyber"` gives SMCyber the GL steps (Locations, Coverages, Exposures, Modifiers). Recorded in `policycenter/overlay-template/pc-edits.json`; backup in `C:ProvenPath-backup`. SMCyber coverages (category `GLOther`) should render in the **Additional Coverages** card. The UI still needs a human check (report 005's UI section was inferred).
