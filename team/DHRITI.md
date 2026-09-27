@@ -58,3 +58,5 @@ The backend (`backend/app`) is built and tested. Run it with `cp .env.example .e
 **Rules:** there are **23** rules (the plan's "22" was an arithmetic slip: 3+7+4+5+3 plus the GRD rule). Any rule edit changes the `rulesetHash`, and runs verified under the old hash can't be deployed. That's intended.
 
 **Eval corpus:** `eval/corpus/*.json`. Run it with `cd backend && ./gradlew :eval:run`; the result shows up at `GET /api/v1/metrics`.
+
+> **Update (VM survey 002):** in real PolicyCenter, `owningEntityType` for GL-line coverages is **`GeneralLiabilityLine`** (`GLLine` is the line *pattern* code). CYB-TYPE-002, the matching source text, the fixtures and the corpus now use `GeneralLiabilityLine`. Planner proposals must set `owningEntityType: "GeneralLiabilityLine"` and pattern codes `SMCyber*Cov`.

@@ -25,7 +25,7 @@
         "patternCode": "SMCyberDataBreachCov",
         "name": "Data Breach Response Coverage",
         "category": "CyberFirstParty",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Required",
         "limitMaxInr": 2000000,
         "deductibleInr": 100000,
@@ -49,7 +49,7 @@
         "patternCode": "SMCyberPrivacyLiabilityCov",
         "name": "Privacy Liability Coverage",
         "category": "CyberThirdParty",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Required",
         "limitMaxInr": 2000000,
         "deductibleInr": 100000,
@@ -68,7 +68,7 @@
         "patternCode": "SMCyberPriorKnownExcl",
         "name": "Prior Known Incidents Exclusion",
         "category": "CyberExclusion",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Required",
         "conditions": [],
         "citations": [
@@ -85,7 +85,7 @@
         "patternCode": "SMCyberIntentionalActsExcl",
         "name": "Intentional Acts Exclusion",
         "category": "CyberExclusion",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Required",
         "conditions": [],
         "citations": [
@@ -102,7 +102,7 @@
         "patternCode": "SMCyberInfraFailureExcl",
         "name": "Infrastructure Failure Exclusion",
         "category": "CyberExclusion",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Required",
         "conditions": [],
         "citations": [
@@ -119,7 +119,7 @@
         "patternCode": "SMCyberBaseRatingCov",
         "name": "Base Rating Clause",
         "category": "CyberRating",
-        "owningEntityType": "GLLine",
+        "owningEntityType": "GeneralLiabilityLine",
         "existence": "Preset",
         "factors": {
           "industryFactor": 1.0

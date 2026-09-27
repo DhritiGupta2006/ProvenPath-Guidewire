@@ -22,8 +22,10 @@ Source: the VM setup report (Day 0). The hostname and credentials are deliberate
 | URL / login | `http://localhost:8180/pc` · `su` / `gw` |
 | JDK | Amazon Corretto 11.0.17 at `C:\Guidewire\Apps\Amazon Corretto\jdk11.0.17_8` (global `JAVA_HOME`, **don't change it**) |
 | State at setup | Stopped |
-| Boot time / restart time | **TODO (Chinmay, Day 1):** measure |
-| ProductModelAPI WSDL | **TODO (Chinmay):** exact URL under `/pc/ws/...` |
+| Boot / stop / restart (measured, VM task 002) | Cold boot **8 m 18 s** · stop **18 s** · warm restart **3 m 32 s** (Gradle up-to-date ~30 s + Jetty ~3 m). Ready log line: `***** PolicyCenter ready *****`. Banner: `DEV mode - 10.2.1.1711` |
+| ProductModelAPI (SOAP) | **`pc1000`**, not `pc900`: WSDL `http://localhost:8180/pc/ws/gw/webservice/pc/pc1000/productmodel/ProductModelAPI?WSDL`, SOAP 1.1 endpoint `…/ProductModelAPI/soap11`. Auth: HTTP Basic `su:gw` or the `gwsoap:authentication` header. Existence check: `getPublicIdForCodeIdentifier(codeIdentifier, productModelType)` returns `<return>` if it exists, otherwise an empty response (~50 ms) |
+| REST | Only `/pc/rest/apis` and `/system/v1/server`; **no product-model or submission REST API**. Use SOAP plus XML config |
+| Product model facts | GL line pattern `GLLine` (entity `GeneralLiabilityLine`, coverage subtype `GeneralLiabilityCov`). A new coverage = drop `<Code>.xml` + `<Code>-lookups.xml` into `policylinepatterns/GLLine/coveragepatterns/` (not listed in `GLLine.xml`). A product can reuse `GLLine` (`CommercialPackage` does). Display names live in the shared file `config/locale/productmodel.display.properties`. APD is present. New product-model XML needs a restart |
 
 ## Backup (done)
 `C:\GW10\PolicyCenter\modules\configuration` → `C:\ProvenPath-backup\configuration-20260926-1918` (150,717 files, 937 MB, verified identical).

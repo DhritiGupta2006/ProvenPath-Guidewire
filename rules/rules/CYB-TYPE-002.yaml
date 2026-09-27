@@ -6,7 +6,7 @@ depends_on: []
 logic:
   operator: EQ
   field: "clause.owningEntityType"
-  value: "GLLine"
+  value: "GeneralLiabilityLine"
 source_code: IRDAI-CYB-G-2024-S2.2
 error_template: "Invalid owning entity type {actual}"
 pc_mapping: "ClausePattern.owningEntityType"

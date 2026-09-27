@@ -10,7 +10,7 @@ sources:
   - source_code: IRDAI-CYB-G-2024-S2.2
     title: Owning Entity Validation
     section: "2.2"
-    full_text: "Every clause in an SME Cyber Insurance product shall be owned by the GLLine entity type as defined in the Guidewire PolicyCenter product model hierarchy. (curated/illustrative, not legal text)"
+    full_text: "Every clause in an SME Cyber Insurance product shall be owned by the GeneralLiabilityLine entity type (policy line pattern GLLine) as defined in the Guidewire PolicyCenter product model hierarchy. (curated/illustrative, not legal text)"
     effective_date: "2024-04-01"
     expiry_date: null
     jurisdiction: IN
