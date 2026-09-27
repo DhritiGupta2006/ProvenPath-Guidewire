@@ -73,3 +73,10 @@ Temurin 11.0.32 (in-session `JAVA_HOME` only; PC's Corretto untouched), embedded
 | `scripts\stop-local.cmd` | Clean stop; no leftover `postgres.exe` or `java.exe` |
 
 **Not yet exercised on the VM:** starting/stopping PolicyCenter (boot and restart times still TODO), the SMCyber package, the PC agent, ProductModelAPI, and the web UI.
+
+## SMCyber v0 installed (VM task 003)
+Product `SMCyber` plus 3 coverages on `GLLine` (`SMCyberDataBreachCov` Required, `SMCyberExtortionCov` and `SMCyberBusinessInterruptionCov` Electable), 6 Direct cov terms, and display names in a marked block. Template and install/uninstall guide: `policycenter/overlay-template/`. SOAP confirms all 10 codes.
+
+**⚠️ The first install's restart took 22 m 17 s** (the new product-model XML triggered a full `compileGosu` of 29,489 classes). A no-change warm restart is 3 m 32 s. VM task 004 measures a values-only change; the answer decides live deploy vs. pre-deploy in the demo.
+
+Not yet observed by a human: the SMCyber coverages screen in New Submission, and that they stay off General Liability.
