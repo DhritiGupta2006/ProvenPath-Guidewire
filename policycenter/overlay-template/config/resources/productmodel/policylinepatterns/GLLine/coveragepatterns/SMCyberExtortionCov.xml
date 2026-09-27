@@ -32,6 +32,8 @@ return GeneralLiabilityLine.Branch != null and GeneralLiabilityLine.Branch.Polic
         <CovTermLimits
           codeIdentifier="SMCyberExtortionLimitusd"
           currency="usd"
+          maxVal="2500000"
+          minVal="0"
           public-id="SMCyberExtortionLimitusd"/>
       </LimitsSet>
     </DirectCovTermPattern>
@@ -50,6 +52,8 @@ return GeneralLiabilityLine.Branch != null and GeneralLiabilityLine.Branch.Polic
         <CovTermLimits
           codeIdentifier="SMCyberExtortionDeductibleusd"
           currency="usd"
+          maxVal="250000"
+          minVal="0"
           public-id="SMCyberExtortionDeductibleusd"/>
       </LimitsSet>
     </DirectCovTermPattern>

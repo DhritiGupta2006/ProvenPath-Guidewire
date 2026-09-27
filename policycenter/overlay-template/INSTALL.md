@@ -59,7 +59,36 @@ Wait for log line: `INFO Server.RunLevel ***** PolicyCenter ready *****`.
 
 ---
 
-## 3. Uninstallation Steps
+## 3. Term Limits & Bounds Convention
+
+Direct coverage term patterns (`DirectCovTermPattern`) support native range enforcement via attributes on `<CovTermLimits>`:
+- **`minVal`**: Minimum permissible numeric value (e.g. `minVal="0"`).
+- **`maxVal`**: Maximum permissible numeric value (e.g. `maxVal="2500000"`).
+
+### Guidewire Reference Example
+Existing Guidewire product models use this pattern across multiple lines. For example, in `modules/configuration/config/resources/productmodel/policylinepatterns/BOPLine/coveragepatterns/BOPBuildingCov.xml`:
+```xml
+<CovTermLimits
+  codeIdentifier="BOPBldgLimusd"
+  currency="usd"
+  maxVal="3000000.0000"
+  minVal="1"
+  public-id="BOPBldgLimusd"/>
+```
+
+### Applied SMCyber Bounds
+In `SMCyberExtortionCov.xml`:
+- `SMCyberExtortionLimitusd`: `minVal="0"`, `maxVal="2500000"` (enforces the verified 50% cap of ₹50L).
+- `SMCyberExtortionDeductibleusd`: `minVal="0"`, `maxVal="250000"`.
+
+### Validation Behavior & Lifecycle
+- **UI Validation**: Evaluated immediately on field entry/step submit via `CovTermDirectInputSet.pcf` (`validationExpression="gw.pcf.coverage.CovTermDirectInputSetHelper.validate(term)"` calling `covTerm.validateValueInRange()`).
+- **Error Display**: Violations trigger PolicyCenter standard display key `{0} must be between {1} and {2}` or `{0} cannot be greater than {1}`.
+- **Restart Cost**: Updating `minVal`/`maxVal` attributes triggers `:genProductModelSources` (~15 s), but Gradle recognizes `:compileGosu` as `UP-TO-DATE`. Server restart takes ~3m 54s (avoiding the full 22-minute cold Gosu compilation).
+
+---
+
+## 4. Uninstallation Steps
 
 1. Stop PolicyCenter:
    ```cmd
