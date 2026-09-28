@@ -1,0 +1,54 @@
+{
+  "name": "propose_product",
+  "description": "Propose an SMCyber insurance product structure for Indian SMEs. Call this first to establish the product-level parameters. The LLM only proposes; the deterministic gate decides compliance.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "executionId": {
+        "type": "string",
+        "description": "Existing execution ID. Omit on the first call; one is created automatically."
+      },
+      "prompt": {
+        "type": "string",
+        "description": "The original PM prompt (captured for traceability). Provide when executionId is absent."
+      },
+      "line": {
+        "type": "string",
+        "enum": ["SMCyber"],
+        "description": "Product line — always SMCyber for this hackathon."
+      },
+      "aggregateLimitInr": {
+        "type": "integer",
+        "description": "Policy aggregate limit in INR. Must be between 500000 (₹5L) and 50000000 (₹5Cr).",
+        "minimum": 500000,
+        "maximum": 50000000
+      },
+      "turnoverInr": {
+        "type": "integer",
+        "description": "Insured enterprise annual turnover in INR. Must not exceed 2500000000 (₹250Cr).",
+        "minimum": 0,
+        "maximum": 2500000000
+      },
+      "minimumPremiumInr": {
+        "type": "integer",
+        "description": "Minimum premium floor in INR. Must be at least 10000 (₹10,000).",
+        "minimum": 10000
+      },
+      "targetEffectiveDate": {
+        "type": "string",
+        "format": "date",
+        "description": "Proposed policy effective date in ISO 8601 format (YYYY-MM-DD)."
+      },
+      "jurisdiction": {
+        "type": "string",
+        "enum": ["IN"],
+        "description": "Jurisdiction — always IN (India)."
+      },
+      "proseSummary": {
+        "type": "string",
+        "description": "Plain-language summary of the proposed product. Every monetary value mentioned must match a verified clause value exactly (required for the GROUNDING check)."
+      }
+    },
+    "required": ["aggregateLimitInr", "turnoverInr", "minimumPremiumInr", "targetEffectiveDate"]
+  }
+}

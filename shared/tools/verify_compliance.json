@@ -1,0 +1,14 @@
+{
+  "name": "verify_compliance",
+  "description": "Run the deterministic ProvenPath compliance gate on the current draft proposal. The gate checks all 23 rules across 6 layers (TYPE, RANGE, CONSISTENCY, RULE_MATCH, SOURCE, GROUNDING). Returns PASSED or BLOCKED with named failing rules and reasons. The LLM must not interpret a BLOCKED result as partial compliance — nothing reaches PolicyCenter unless the gate returns PASSED.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "executionId": {
+        "type": "string",
+        "description": "Execution ID from propose_product. The draft associated with this execution is verified."
+      }
+    },
+    "required": ["executionId"]
+  }
+}

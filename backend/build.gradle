@@ -117,3 +117,19 @@ project(':app') {
         exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
     }
 }
+
+// Track C: AI Layer — depends ONLY on :contracts (never on :core or :app)
+project(':planner') {
+    dependencies {
+        implementation project(':contracts')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    }
+}
+
+// Wire :planner into :app at runtime (class-name loading, no compile dependency)
+project(':app') {
+    dependencies {
+        runtimeOnly project(':planner')
+    }
+}
