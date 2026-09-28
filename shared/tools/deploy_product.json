@@ -1,0 +1,14 @@
+{
+  "name": "deploy_product",
+  "description": "Trigger deployment of the verified, reviewer-approved product configuration into Guidewire PolicyCenter. Only callable after verify_compliance returns PASSED and a named reviewer has approved the proposal. Returns a deployment ID to track progress. The agent on the Guidewire VM will pull, verify the signed manifest, and install the overlay.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "executionId": {
+        "type": "string",
+        "description": "Execution ID of a PASSED, approved proposal."
+      }
+    },
+    "required": ["executionId"]
+  }
+}

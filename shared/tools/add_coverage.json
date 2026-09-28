@@ -1,0 +1,120 @@
+{
+  "name": "add_coverage",
+  "description": "Add or update coverage, exclusion, condition, or rating clauses on the current draft proposal. Call after propose_product. All citations must copy text VERBATIM from sources.yaml. Monetary amounts must be in INR integers.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "executionId": {
+        "type": "string",
+        "description": "Execution ID from propose_product."
+      },
+      "clause": {
+        "$ref": "#/definitions/Clause",
+        "description": "A single clause to add or replace (matched by clauseId if provided)."
+      },
+      "clauses": {
+        "type": "array",
+        "items": { "$ref": "#/definitions/Clause" },
+        "description": "Multiple clauses to add or replace in one call."
+      },
+      "proseSummary": {
+        "type": "string",
+        "description": "Updated plain-language summary. Every number must match a clause value exactly."
+      }
+    },
+    "required": ["executionId"],
+    "definitions": {
+      "Citation": {
+        "type": "object",
+        "properties": {
+          "sourceCode": {
+            "type": "string",
+            "description": "Exact source_code from sources.yaml (e.g. IRDAI-CYB-G-2024-S3.4, CERT-IN-DIR-2022-6HR)."
+          },
+          "section": {
+            "type": "string",
+            "description": "Section identifier from that source (e.g. '3.4', '70B(6)')."
+          },
+          "textSnippet": {
+            "type": "string",
+            "description": "VERBATIM copy of the full_text from sources.yaml for this source_code. Do not paraphrase."
+          }
+        },
+        "required": ["sourceCode", "section", "textSnippet"]
+      },
+      "Clause": {
+        "type": "object",
+        "properties": {
+          "clauseId": {
+            "type": "string",
+            "description": "Stable identifier (e.g. c-001). Auto-assigned if omitted. Reuse the same id to update."
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["COVERAGE", "EXCLUSION", "RATING"],
+            "description": "Clause type."
+          },
+          "patternCode": {
+            "type": "string",
+            "pattern": "^SMCyber[A-Za-z]+(Cov|Excl)$",
+            "description": "Guidewire pattern code. Must match ^SMCyber[A-Za-z]+(Cov|Excl)$."
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name."
+          },
+          "category": {
+            "type": "string",
+            "enum": ["CyberFirstParty", "CyberThirdParty", "CyberExclusion", "CyberRating"],
+            "description": "Coverage category."
+          },
+          "owningEntityType": {
+            "type": "string",
+            "enum": ["GeneralLiabilityLine"],
+            "description": "Must be GeneralLiabilityLine for Phase 1 (GL-line cyber coverages)."
+          },
+          "existence": {
+            "type": "string",
+            "enum": ["Required", "Suggested", "Electable", "Preset"],
+            "description": "Existence type."
+          },
+          "limitMaxInr": {
+            "type": "integer",
+            "description": "Maximum coverage limit in INR. Omit for EXCLUSION/RATING kinds."
+          },
+          "deductibleInr": {
+            "type": "integer",
+            "description": "Deductible in INR. Must be between 1% and 10% of limitMaxInr, and strictly less than limitMaxInr."
+          },
+          "waitingHours": {
+            "type": "integer",
+            "description": "Waiting period in hours (Business Interruption only). Must be 8–72.",
+            "minimum": 8,
+            "maximum": 72
+          },
+          "conditions": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Condition strings. Extortion coverage MUST include 'law-enforcement-notification'. CERT-In coverage MUST include 'cert-in-6-hour-reporting'. Fines coverage MUST include 'where-insurable-by-law'."
+          },
+          "factors": {
+            "type": "object",
+            "additionalProperties": { "type": "number" },
+            "description": "Rating factors (RATING kind only). Each value must be 0.50–3.00."
+          },
+          "excludesPatternCodes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Pattern codes excluded by this exclusion clause."
+          },
+          "citations": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/Citation" },
+            "description": "At least one citation per clause. textSnippet must be VERBATIM from sources.yaml."
+          }
+        },
+        "required": ["kind", "patternCode", "name", "category", "owningEntityType", "existence", "citations"]
+      }
+    }
+  }
+}

@@ -10,8 +10,9 @@ rootProject.name = 'provenpath'
 // Track A modules (Verification Core)
 include 'contracts', 'core', 'eval', 'app'
 
-// Future modules — teammates will add these later:
-// include 'app'      // Shaurya: Javalin API, Flyway, SSE
-// include 'planner'  // Dhriti: Gemini planner
+// Track C — AI Layer + Rule Content (Dhriti)
+include 'planner'
+
+// Future modules:
 // include 'pcexport' // Chinmay: PolicyCenter export
 // include 'pcagent'  // Chinmay: PolicyCenter agent
