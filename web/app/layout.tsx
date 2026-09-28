@@ -1,35 +1,20 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Instrument_Serif } from 'next/font/google';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-mono',
-  subsets: ['latin'],
-});
+const geist = Geist({ variable: '--font-geist', subsets: ['latin'] });
+const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
+const instrument = Instrument_Serif({ variable: '--font-instrument', subsets: ['latin'], weight: '400', style: ['normal', 'italic'] });
 
 export const metadata: Metadata = {
-  title: 'ProvenPath — Mission Control | Guidewire PolicyCenter 10',
-  description: 'Deterministic pre-commit compliance gate for agentic insurance product configuration in Guidewire PolicyCenter 10.',
+  title: 'ProvenPath',
+  description: 'A deterministic compliance gate between AI-proposed insurance products and Guidewire PolicyCenter.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-    >
-      <body className="h-full bg-slate-950 text-slate-100 overflow-hidden font-sans">
-        {children}
-      </body>
+    <html lang="en" className={`${geist.variable} ${geistMono.variable} ${instrument.variable} antialiased`}>
+      <body className="min-h-dvh bg-bg text-fg font-sans">{children}</body>
     </html>
   );
 }

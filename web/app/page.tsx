@@ -1,239 +1,184 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
-import { useExecutionStream, StreamMode } from '@/lib/useExecutionStream';
-import { useTheme } from '@/lib/useTheme';
-import { api, ApiError } from '@/lib/api';
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { TraceTimeline } from '@/components/timeline/TraceTimeline';
-import { RuleDag } from '@/components/dag/RuleDag';
-import { ToolsPanel } from '@/components/tools/ToolsPanel';
-import { BlockedCard } from '@/components/gates/BlockedCard';
-import { ReviewerPanel } from '@/components/gates/ReviewerPanel';
-import { DeployPanel } from '@/components/deploy/DeployPanel';
-import { ProvenanceDrawer } from '@/components/drawers/ProvenanceDrawer';
-import { MetricsPanel } from '@/components/metrics/MetricsPanel';
-import { GateBlockedPayload, HealthResponse, RuleDefinition } from '@/lib/contracts';
+import React, { useEffect, useRef, useState } from 'react';
+import Lenis from 'lenis';
+import { motion, useScroll, useTransform, useMotionValueEvent } from 'motion/react';
+import { ArrowRight, Play } from 'lucide-react';
+import { api } from '@/lib/api';
+import { EvalMetrics, HealthResponse, RuleDefinition } from '@/lib/contracts';
+import { Magnetic, Reveal, WordReveal, Wordmark } from '@/components/ui/primitives';
+import { GateCanvas } from '@/components/landing/GateCanvas';
+import { HowItWorks } from '@/components/landing/HowItWorks';
+import { LaunchButton, LaunchProvider } from '@/components/landing/LaunchSequence';
+import { Layers, ProblemStatement, Proof, RULES_FALLBACK, RuleMarquee, TamperStory } from '@/components/landing/Sections';
 
-const DEFAULT_PROMPT = 'Cyber insurance for Indian startups, up to ₹50L coverage';
+function PrimaryLaunch({ label = 'Launch Mission Control' }: { label?: string }) {
+  return (
+    <Magnetic>
+      <LaunchButton className="beam-border group flex items-center gap-2.5 rounded-full bg-fg px-7 py-3.5 text-[15px] font-medium text-bg shadow-[0_0_40px_rgb(157_156_255/0.25)] transition-colors hover:bg-white">
+        {label}
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      </LaunchButton>
+    </Magnetic>
+  );
+}
 
-export default function MissionControlPage() {
-  const { isDark, toggleTheme } = useTheme();
-
-  const [promptText, setPromptText] = useState<string>(DEFAULT_PROMPT);
-  const [selectedMode, setSelectedMode] = useState<StreamMode>('live');
-  const [selectedClauseId, setSelectedClauseId] = useState<string | null>(null);
-  const [isMetricsOpen, setIsMetricsOpen] = useState(false);
-  const [isDeployOpen, setIsDeployOpen] = useState(false);
-  const [isReviewOpen, setIsReviewOpen] = useState(true);
-  const [tamperBlocked, setTamperBlocked] = useState<GateBlockedPayload | null>(null);
-  const [dismissedBlockedRun, setDismissedBlockedRun] = useState<string | null>(null);
-  const [uiError, setUiError] = useState<string | null>(null);
+export default function Landing() {
   const [health, setHealth] = useState<HealthResponse | null>(null);
-  const [healthError, setHealthError] = useState<string | null>(null);
-  const [rules, setRules] = useState<RuleDefinition[]>([]);
-  const [rulesError, setRulesError] = useState<string | null>(null);
+  const [online, setOnline] = useState<boolean | null>(null);
+  const [rules, setRules] = useState<RuleDefinition[] | null>(null);
+  const [metrics, setMetrics] = useState<EvalMetrics | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
 
-  const stream = useExecutionStream();
-  const {
-    mode,
-    executionId,
-    events,
-    nodesMap,
-    nodeStatusSummary,
-    overallStatus,
-    currentIteration,
-    blockedData,
-    repairData,
-    reviewData,
-    pcStage,
-    pcDetail,
-    pcExportData,
-    toolCalls,
-    isStreaming,
-    lastError,
-    timeToVerifiedMs,
-    speed,
-    setSpeed,
-    startLive,
-    startRecorded,
-    resetStream,
-    elapsedRestartSeconds,
-  } = stream;
-
-  // Backend health + the real rule graph (GET /health, GET /rules).
   useEffect(() => {
-    let cancelled = false;
-    api
-      .health()
-      .then(h => !cancelled && setHealth(h))
-      .catch(e => !cancelled && setHealthError(e instanceof ApiError ? e.message : String(e)));
-    api
-      .rules()
-      .then(r => !cancelled && setRules(r.rules))
-      .catch(e => !cancelled && setRulesError(e instanceof ApiError ? e.message : String(e)));
-    return () => {
-      cancelled = true;
-    };
+    const lenis = new Lenis({ autoRaf: true, lerp: 0.1 });
+    return () => lenis.destroy();
   }, []);
 
-  // Offline recorded replay: without the backend, derive the graph nodes from the replayed events (no dependency edges).
-  const graphRules = useMemo<RuleDefinition[]>(() => {
-    if (rules.length > 0 || !rulesError) return rules;
-    return Object.values(nodesMap)
-      .filter(n => n.ruleCode !== 'UNMATCHED')
-      .map(n => ({ ruleCode: n.ruleCode, name: n.ruleCode, layer: n.layer, appliesTo: '', dependsOn: [], sourceCode: n.sourceCode }));
-  }, [rules, rulesError, nodesMap]);
+  useEffect(() => {
+    api
+      .health()
+      .then(h => {
+        setHealth(h);
+        setOnline(true);
+      })
+      .catch(() => setOnline(false));
+    api.rules().then(r => setRules(r.rules)).catch(() => {});
+    api.metrics().then(setMetrics).catch(() => {});
+  }, []);
 
-  const handleStart = () => {
-    setIsReviewOpen(true);
-    setTamperBlocked(null);
-    setUiError(null);
-    if (selectedMode === 'live') {
-      void startLive(promptText);
-    } else {
-      startRecorded();
-    }
-  };
+  const { scrollY } = useScroll();
+  useMotionValueEvent(scrollY, 'change', v => setScrolled(v > 24));
+  const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
+  const heroY = useTransform(heroProgress, [0, 1], [0, 140]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0]);
+  const heroScale = useTransform(heroProgress, [0, 1], [1, 0.94]);
 
-  const handleReset = () => {
-    setIsReviewOpen(true);
-    setTamperBlocked(null);
-    setUiError(null);
-    resetStream();
-  };
-
-  // The BLOCKED card stays up (even after the planner repairs) until the user dismisses it: it's the key demo beat.
-  const runBlocked = blockedData && blockedData.runId !== dismissedBlockedRun ? blockedData : null;
-  const effectiveBlockedData = tamperBlocked || runBlocked;
-  const repairedIteration = !tamperBlocked && runBlocked && repairData && repairData.runId === runBlocked.runId ? repairData.iteration : null;
-  const showReviewer =
-    !!reviewData && isReviewOpen && (overallStatus === 'review_pending' || overallStatus === 'approved' || overallStatus === 'rejected');
-  const errorText = uiError || lastError;
+  const shownRules = rules ?? RULES_FALLBACK;
 
   return (
-    <div
-      className={`flex flex-col h-screen w-screen overflow-hidden font-sans select-none transition-colors ${
-        isDark ? 'bg-[#050507] text-white' : 'bg-[#f8fafc] text-neutral-900'
-      }`}
-    >
-      <Navbar
-        overallStatus={overallStatus}
-        mode={isStreaming ? mode : selectedMode}
-        onModeChange={setSelectedMode}
-        executionId={executionId}
-        health={health}
-        healthError={healthError}
-        isStreaming={isStreaming}
-        speed={speed}
-        setSpeed={setSpeed}
-        onStart={handleStart}
-        onReset={handleReset}
-        onOpenMetrics={() => setIsMetricsOpen(true)}
-        onOpenDeploy={() => setIsDeployOpen(true)}
-        onOpenReview={() => setIsReviewOpen(true)}
-        onTamperResult={setTamperBlocked}
-        onError={setUiError}
-        isDark={isDark}
-        onToggleTheme={toggleTheme}
-      />
-
-      <div className="px-3 pt-3 shrink-0 space-y-2">
+    <LaunchProvider>
+      <main
+        className="relative overflow-x-clip"
+        onPointerMove={e => {
+          document.documentElement.style.setProperty('--cx', `${e.clientX}px`);
+          document.documentElement.style.setProperty('--cy', `${e.clientY}px`);
+        }}
+      >
+        {/* cursor light */}
         <div
-          className={`flex items-center gap-2 border rounded-xl p-2 transition-colors ${
-            isDark ? 'bg-neutral-950/80 border-white/10 text-white' : 'bg-white border-neutral-200 text-neutral-900 shadow-sm'
-          }`}
-        >
-          <span className={`text-[10px] font-mono font-bold px-2 uppercase tracking-wider shrink-0 ${isDark ? 'text-neutral-400' : 'text-neutral-500'}`}>
-            Product request:
-          </span>
-          <input
-            type="text"
-            value={promptText}
-            disabled={isStreaming || selectedMode === 'recorded'}
-            onChange={e => setPromptText(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && !isStreaming && handleStart()}
-            placeholder="Describe the insurance product in plain language…"
-            className="flex-1 bg-transparent text-xs font-mono outline-none px-1 disabled:opacity-60"
-          />
-          {selectedMode === 'live' && health && (
-            <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${isDark ? 'border-white/15 text-neutral-400' : 'border-neutral-300 text-neutral-500'}`}>
-              planner: {health.llmMode === 'fixture' ? 'fixture (offline)' : health.planner}
-            </span>
-          )}
-          <button
-            onClick={() => setPromptText(DEFAULT_PROMPT)}
-            disabled={isStreaming}
-            className={`text-[10px] font-mono px-3 py-1 rounded border whitespace-nowrap cursor-pointer ${
-              isDark ? 'bg-white/10 hover:bg-white/20 text-white border-white/20' : 'bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border-neutral-300 font-medium'
-            }`}
-          >
-            Demo prompt (₹50L cyber)
-          </button>
-        </div>
-        {errorText && (
-          <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-rose-500/50 bg-rose-500/10 text-rose-500 text-xs font-mono">
-            <span>{errorText}</span>
-            <button onClick={() => setUiError(null)} className="px-2 cursor-pointer">
-              ×
-            </button>
-          </div>
-        )}
-      </div>
-
-      <main className="flex-1 grid grid-cols-12 gap-3 p-3 min-h-0 overflow-hidden">
-        <section className="col-span-3 h-full min-h-0 flex flex-col">
-          <TraceTimeline events={events} isDark={isDark} />
-        </section>
-        <section className="col-span-6 h-full min-h-0 flex flex-col">
-          <RuleDag rules={graphRules} rulesError={rulesError} nodesMap={nodesMap} onSelectClauseId={setSelectedClauseId} isDark={isDark} />
-        </section>
-        <section className="col-span-3 h-full min-h-0 flex flex-col">
-          <ToolsPanel toolCalls={toolCalls} isDark={isDark} />
-        </section>
-      </main>
-
-      <Footer currentIteration={currentIteration} nodeStats={nodeStatusSummary} executionId={executionId} mode={mode} isDark={isDark} />
-
-      <BlockedCard
-        blockedData={effectiveBlockedData}
-        isTamper={!!tamperBlocked}
-        repairedIteration={repairedIteration}
-        onDismiss={() => (tamperBlocked ? setTamperBlocked(null) : setDismissedBlockedRun(blockedData?.runId ?? null))}
-        onOpenProvenance={setSelectedClauseId}
-      />
-
-      {showReviewer && (
-        <ReviewerPanel
-          executionId={executionId}
-          mode={mode}
-          reviewData={reviewData}
-          onDeployTrigger={() => {
-            setIsReviewOpen(false);
-            setIsDeployOpen(true);
-          }}
-          onDismiss={() => setIsReviewOpen(false)}
-          onOpenProvenance={setSelectedClauseId}
-          isDark={isDark}
+          className="pointer-events-none fixed inset-0 z-30 hidden md:block"
+          style={{ background: 'radial-gradient(600px circle at var(--cx, 50%) var(--cy, 30%), rgb(157 156 255 / 0.045), transparent 70%)' }}
         />
-      )}
 
-      <DeployPanel
-        executionId={executionId}
-        mode={mode}
-        canDeploy={overallStatus === 'approved' && mode === 'live'}
-        pcStage={pcStage}
-        pcDetail={pcDetail}
-        pcExportData={pcExportData}
-        elapsedRestartSeconds={elapsedRestartSeconds}
-        isOpen={isDeployOpen}
-        onClose={() => setIsDeployOpen(false)}
-      />
+        <header
+          className={`fixed inset-x-0 top-0 z-40 transition-all duration-500 ${scrolled ? 'border-b border-line bg-bg/70 backdrop-blur-xl' : 'border-b border-transparent'}`}
+        >
+          <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+            <Wordmark />
+            <div className="hidden items-center gap-8 text-sm text-muted md:flex">
+              <a href="#how" className="transition-colors hover:text-fg">How it works</a>
+              <a href="#layers" className="transition-colors hover:text-fg">The gate</a>
+              <a href="#proof" className="transition-colors hover:text-fg">Proof</a>
+            </div>
+            <LaunchButton className="rounded-full border border-line-strong px-4 py-1.5 text-sm transition-colors hover:bg-surface-2">
+              Launch
+            </LaunchButton>
+          </nav>
+        </header>
 
-      <ProvenanceDrawer clauseId={selectedClauseId} executionId={executionId} onClose={() => setSelectedClauseId(null)} />
+        {/* Hero */}
+        <section ref={heroRef} className="relative h-dvh min-h-[680px] overflow-hidden">
+          <div className="absolute inset-0 bg-grid mask-radial" />
+          <motion.div className="absolute inset-0" style={{ opacity: heroOpacity }}>
+            <GateCanvas className="opacity-80" />
+          </motion.div>
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-bg" />
 
-      <MetricsPanel isOpen={isMetricsOpen} onClose={() => setIsMetricsOpen(false)} timeToVerifiedMs={timeToVerifiedMs} />
-    </div>
+          <motion.div style={{ y: heroY, opacity: heroOpacity, scale: heroScale }} className="relative mx-auto flex h-full max-w-6xl flex-col justify-center px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="mb-8 flex w-fit items-center gap-2 rounded-full border border-line bg-surface/70 py-1 pl-1.5 pr-3.5 text-xs text-muted backdrop-blur"
+            >
+              <span className="shrink-0 whitespace-nowrap rounded-full bg-accent/15 px-2 py-0.5 font-mono text-[10px] text-accent">PolicyCenter 10</span>
+              A compliance gate for AI-built insurance products
+            </motion.div>
+
+            <h1 className="max-w-4xl text-[clamp(2.75rem,7vw,6rem)] font-medium leading-[0.98] tracking-[-0.035em]">
+              <WordReveal text="AI proposes." delay={0.1} />
+              <br />
+              <WordReveal text="Rules decide." delay={0.3} italicWords={['decide']} />
+              <br />
+              <span className="text-muted">
+                <WordReveal text="People approve." delay={0.5} />
+              </span>
+            </h1>
+
+            <Reveal delay={0.9}>
+              <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
+                ProvenPath sits between a language model and Guidewire PolicyCenter. Nothing the model writes reaches production until 23 deterministic
+                rules pass it and a named compliance reviewer signs it.
+              </p>
+            </Reveal>
+
+            <Reveal delay={1.05}>
+              <div className="mt-10 flex flex-wrap items-center gap-4">
+                <PrimaryLaunch />
+                <LaunchButton target="recorded" className="flex items-center gap-2 rounded-full px-5 py-3.5 text-[15px] text-muted transition-colors hover:text-fg">
+                  <Play className="h-4 w-4 fill-current" /> Watch a recorded run
+                </LaunchButton>
+              </div>
+            </Reveal>
+
+            <Reveal delay={1.2}>
+              <div className="mt-14 flex items-center gap-2 font-mono text-[11px] text-faint">
+                <span className={`h-1.5 w-1.5 rounded-full ${online ? 'bg-pass shadow-[0_0_8px_var(--color-pass)]' : online === false ? 'bg-fail' : 'bg-faint'}`} />
+                {online === null && 'checking the gate backend…'}
+                {online === false && 'gate backend offline · the recorded run still works'}
+                {online && health && `gate backend online · ruleset ${health.rulesetHash.slice(0, 8)} · planner ${health.llmMode}`}
+              </div>
+            </Reveal>
+          </motion.div>
+        </section>
+
+        <RuleMarquee rules={shownRules} />
+        <ProblemStatement />
+        <HowItWorks />
+        <Layers rules={shownRules} />
+        <TamperStory />
+        <Proof metrics={metrics} ruleCount={rules ? rules.length : null} online={online} />
+
+        {/* Final call */}
+        <section className="relative overflow-hidden px-6 py-40 text-center">
+          <div
+            className="absolute left-1/2 top-1/2 h-[600px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{ background: 'radial-gradient(ellipse, rgb(123 121 255 / 0.16), transparent 65%)' }}
+          />
+          <div className="relative">
+            <h2 className="mx-auto max-w-3xl text-5xl font-medium tracking-tight md:text-7xl">
+              <WordReveal text="Ship products you can prove." italicWords={['prove.']} />
+            </h2>
+            <Reveal delay={0.3}>
+              <p className="mx-auto mt-6 max-w-md text-muted">Describe a cyber product and watch it go from a prompt to a verified, approved PolicyCenter package.</p>
+            </Reveal>
+            <Reveal delay={0.45}>
+              <div className="mt-10 flex justify-center">
+                <PrimaryLaunch />
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        <footer className="border-t border-line">
+          <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-faint md:flex-row">
+            <Wordmark />
+            <span>Curated, illustrative IRDAI-style source set. A rule-graph check, not legal advice.</span>
+          </div>
+        </footer>
+      </main>
+    </LaunchProvider>
   );
 }
