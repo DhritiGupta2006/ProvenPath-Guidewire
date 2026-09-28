@@ -1,0 +1,125 @@
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+:root {
+  --bg-app: #050507;
+  --fg-app: #f8fafc;
+  --card-bg: #090d16;
+  --card-border: rgba(255, 255, 255, 0.1);
+  --header-bg: rgba(5, 5, 7, 0.85);
+  --input-bg: rgba(255, 255, 255, 0.03);
+}
+
+.light {
+  --bg-app: #f8fafc;
+  --fg-app: #09090b;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.1);
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --input-bg: rgba(0, 0, 0, 0.03);
+}
+
+body {
+  background: var(--bg-app);
+  color: var(--fg-app);
+  font-family: var(--font-sans), 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.015em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hide Next.js Dev Indicator ("N" badge in lower right) */
+nextjs-portal,
+[data-nextjs-dev-overlay],
+[data-nextjs-toast],
+[data-nextjs-route-announcer],
+div[data-nextjs-dev-tools-button],
+button[data-nextjs-dev-tools-button],
+#next-logo-container {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(120, 120, 120, 0.25);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 120, 0.45);
+}
+
+/* React Flow customizations */
+.react-flow__attribution {
+  display: none !important;
+}
+
+.react-flow__handle {
+  width: 7px !important;
+  height: 7px !important;
+  border-radius: 50% !important;
+  background-color: currentColor !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+/* React Flow Zoom / Nav Controls High Contrast */
+.dark .react-flow__controls,
+:root:not(.light) .react-flow__controls {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: #121216 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .react-flow__controls button,
+:root:not(.light) .react-flow__controls button {
+  background-color: #18181e !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.dark .react-flow__controls button:hover,
+:root:not(.light) .react-flow__controls button:hover {
+  background-color: #272732 !important;
+}
+
+.dark .react-flow__controls button svg,
+:root:not(.light) .react-flow__controls button svg {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Light mode React Flow Controls */
+.light .react-flow__controls {
+  border-color: #cbd5e1 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .react-flow__controls button {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  fill: #0f172a !important;
+}
+
+.light .react-flow__controls button:hover {
+  background-color: #f1f5f9 !important;
+}
+
+.light .react-flow__controls button svg {
+  fill: #0f172a !important;
+  stroke: #0f172a !important;
+}
+

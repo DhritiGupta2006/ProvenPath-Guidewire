@@ -13,7 +13,7 @@ Every event is appended to `pp_event_log` (a trigger rejects UPDATE/DELETE/TRUNC
 {"executionId": "exec-…", "seq": 12, "ts": "2026-09-27T01:50:44.123Z", "type": "verify.node", "payload": { … }}
 ```
 
-`fixtures/events_demo_run.jsonl` is a **real recorded run** of the demo (`LLM_MODE=fixture`) up to `review.decided`. The `pc.*` tail is a sample in the exact shapes below, until `:pcexport` and the VM agent exist.
+`fixtures/events_demo_run.jsonl` is a **real recorded run** of the demo (`LLM_MODE=fixture`) up to `review.decided`, with nothing synthesized. It will be re-recorded with real `pc.*` events once `:pcexport` and the VM agent deploy for real. Mission Control plays it only in its explicit **Recorded** mode.
 
 ## Who emits what
 | Emitter | Types |

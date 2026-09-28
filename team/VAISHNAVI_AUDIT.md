@@ -1,5 +1,7 @@
 # Audit: `frontend` branch (Mission Control), Day 3
 
+> ✅ **Resolved (Day 3):** Shaurya took over Track D and rebuilt the UI on the real backend on branch `track-d/web` (merged to `main`). All P0/P1/P2 items below are fixed; see `web/README.md`. This audit is kept for the record.
+
 Audited commit `06eac01` (branch `origin/frontend`).
 
 ## Verdict: good UI shell, but NOT mergeable yet. The data is faked.
