@@ -25,3 +25,6 @@ vmreport.md
 
 # Gradle wrapper jar is needed to build without an installed Gradle
 !backend/gradle/wrapper/gradle-wrapper.jar
+
+# PC agent config on the VM (agent key + gate secret)
+agent.env

@@ -13,6 +13,5 @@ include 'contracts', 'core', 'eval', 'app'
 // Track C — AI Layer + Rule Content (Dhriti)
 include 'planner'
 
-// Future modules:
-// include 'pcexport' // Chinmay: PolicyCenter export
-// include 'pcagent'  // Chinmay: PolicyCenter agent
+// Track B — PolicyCenter package builder and PC agent
+include 'pcexport', 'pcagent'

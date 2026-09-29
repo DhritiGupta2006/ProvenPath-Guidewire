@@ -13,6 +13,8 @@ uses provenpath.contracts.PcPackage
 uses provenpath.contracts.PcTermRange
 uses provenpath.contracts.Proposal
 uses provenpath.contracts.Verdict
+uses provenpath.contracts.Signing
+uses provenpath.core.gate.GateToken
 uses provenpath.core.gate.Hashing
 
 /** Test stand-in for Track B's :pcexport builder: one file + a manifest carrying the verified token. */
@@ -38,6 +40,10 @@ class TestPackageBuilder implements PackageBuilderPort {
     m.Reviewer = reviewer
     m.TermRanges = new ArrayList<PcTermRange>()
     m.GeneratedAt = Instant.now().toString()
+    m.RunId = verdict.RunId
+    m.ProposalHash = verdict.ProposalHash
+    m.RulesetHash = verdict.RulesetHash
+    Signing.sign(m, GateToken.getSecret())
     return new PcPackage(m, bos.toByteArray())
   }
 }

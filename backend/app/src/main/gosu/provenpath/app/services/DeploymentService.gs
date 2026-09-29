@@ -8,6 +8,7 @@ uses provenpath.app.events.EventBus
 uses provenpath.contracts.Json
 uses provenpath.contracts.PackageBuilderPort
 uses provenpath.contracts.Proposal
+uses provenpath.contracts.Signing
 uses provenpath.core.gate.GateToken
 uses provenpath.core.gate.Hashing
 
@@ -82,6 +83,13 @@ class DeploymentService {
       }
       if (pkg.Manifest.GateToken != verdict.GateToken or pkg.Manifest.VerdictHash != verdict.VerdictHash) {
         throw new IllegalStateException("package manifest does not carry the verified gate token / verdict hash")
+      }
+      // The PC agent recomputes the gate token from these and checks the manifest HMAC, so both must be right here.
+      if (pkg.Manifest.RunId != runId or pkg.Manifest.ProposalHash != proposalHash or pkg.Manifest.RulesetHash != run.get("ruleset_hash")) {
+        throw new IllegalStateException("package manifest is not bound to the approved run")
+      }
+      if (!Signing.verifySignature(pkg.Manifest, GateToken.getSecret())) {
+        throw new IllegalStateException("package manifest signature does not verify")
       }
       var manifestJson = Json.canonical(pkg.Manifest)
       var deploymentId = _repo.insertDeployment(executionId, runId, review.get("id") as String, manifestJson, pkg.ZipBytes)

@@ -1,6 +1,6 @@
 /**
  * ProvenPath Contracts - TypeScript mirror of backend/contracts
- * Master Plan 12_BUILD_PLAN_2_DAYS.md § 3
+ * Master Plan docs/plan/12_BUILD_PLAN_2_DAYS.md § 3
  */
 
 export type ClauseKind = 'COVERAGE' | 'EXCLUSION' | 'RATING';

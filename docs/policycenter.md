@@ -50,7 +50,7 @@ agent tested against a local folder                            ├─ (PostgreSQ
                                                                └─ PolicyCenter 10          :8180/pc
 ```
 - **GitHub is the only link** between the laptops and the VM.
-- Build everything on laptops first. The final merge, the real PC connection and full testing happen on the VM via Claude Code: see `team/VM_INTEGRATION.md`.
+- Build everything on laptops first. The final merge, the real PC connection and full testing happen on the VM via Claude Code: see `docs/team/VM_INTEGRATION.md`.
 - **VM config (never committed):**
   - `C:\ProvenPath\.env`: DB, `GEMINI_API_KEY`, `PROVENPATH_GATE_SECRET`, `PC_AGENT_KEY`.
   - `C:\ProvenPath\policycenter\agent\agent.env`:

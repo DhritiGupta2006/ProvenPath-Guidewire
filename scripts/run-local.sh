@@ -10,5 +10,5 @@ export JAVA_HOME="${PROVENPATH_JAVA_HOME:-${JAVA_HOME:?Set PROVENPATH_JAVA_HOME 
 if [ "${1:-}" != "--no-build" ]; then (cd "$ROOT/backend" && ./gradlew :app:fatJar --no-daemon -q); fi
 export PORT="${PORT:-${BACKEND_PORT:-8080}}" DB_MODE="${DB_MODE:-embedded}"
 export EMBEDDED_PG_DIR="${EMBEDDED_PG_DIR:-$ROOT/.provenpath-pgdata}"
-export PROVENPATH_RULES_DIR="$ROOT/rules" PROVENPATH_FIXTURES_DIR="$ROOT/fixtures" PROVENPATH_EVAL_DIR="$ROOT/eval"
+export PROVENPATH_RULES_DIR="$ROOT/rules" PROVENPATH_FIXTURES_DIR="$ROOT/fixtures" PROVENPATH_EVAL_DIR="$ROOT/eval" PROVENPATH_PC_TEMPLATE_DIR="$ROOT/policycenter/overlay-template"
 exec "$JAVA_HOME/bin/java" -jar "$ROOT/backend/app/build/libs/provenpath-app.jar"

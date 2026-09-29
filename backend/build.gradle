@@ -133,3 +133,61 @@ project(':app') {
         runtimeOnly project(':planner')
     }
 }
+
+// Track B: PolicyCenter package builder. Depends ONLY on :contracts; loaded by class name (PACKAGE_BUILDER_CLASS).
+project(':pcexport') {
+    dependencies {
+        implementation project(':contracts')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+    }
+    test {
+        systemProperty 'provenpath.test', 'true'
+        environment 'PROVENPATH_PC_TEMPLATE_DIR', "${rootDir}/../policycenter/overlay-template"
+        environment 'PROVENPATH_FIXTURES_DIR', "${rootDir}/../fixtures"
+        testLogging { events 'failed'; exceptionFormat 'full' }
+    }
+}
+
+project(':app') {
+    dependencies {
+        runtimeOnly project(':pcexport')
+    }
+    test {
+        environment 'PROVENPATH_PC_TEMPLATE_DIR', "${rootDir}/../policycenter/overlay-template"
+    }
+}
+
+// Track B: the PC agent that runs next to PolicyCenter on the VM (java -jar provenpath-pcagent.jar).
+// Depends ONLY on :contracts (Signing re-checks the gate token and the manifest HMAC).
+project(':pcagent') {
+    apply plugin: 'application'
+
+    application {
+        mainClass = 'provenpath.pcagent.Main'
+    }
+
+    dependencies {
+        implementation project(':contracts')
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+        implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.3'
+        testImplementation project(':pcexport')
+    }
+
+    test {
+        systemProperty 'provenpath.test', 'true'
+        environment 'PROVENPATH_PC_TEMPLATE_DIR', "${rootDir}/../policycenter/overlay-template"
+        environment 'PROVENPATH_FIXTURES_DIR', "${rootDir}/../fixtures"
+        testLogging { events 'failed'; exceptionFormat 'full' }
+    }
+
+    tasks.register('fatJar', Jar) {
+        archiveFileName = 'provenpath-pcagent.jar'
+        manifest { attributes 'Main-Class': 'provenpath.pcagent.Main' }
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from sourceSets.main.output
+        dependsOn configurations.runtimeClasspath
+        from { configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) } }
+        exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA'
+    }
+}

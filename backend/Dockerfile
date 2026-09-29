@@ -11,9 +11,13 @@ COPY --from=build /src/backend/app/build/libs/provenpath-app.jar /app/provenpath
 COPY rules /app/rules
 COPY fixtures /app/fixtures
 COPY eval /app/eval
+COPY shared/tools /app/shared/tools
+COPY policycenter/overlay-template /app/policycenter/overlay-template
 ENV PORT=8080 \
     PROVENPATH_RULES_DIR=/app/rules \
     PROVENPATH_FIXTURES_DIR=/app/fixtures \
-    PROVENPATH_EVAL_DIR=/app/eval
+    PROVENPATH_EVAL_DIR=/app/eval \
+    PROVENPATH_TOOLS_DIR=/app/shared/tools \
+    PROVENPATH_PC_TEMPLATE_DIR=/app/policycenter/overlay-template
 EXPOSE 8080
 CMD ["java", "-jar", "/app/provenpath-app.jar"]

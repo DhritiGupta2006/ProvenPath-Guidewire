@@ -6,3 +6,4 @@
 .env
 .env.*
 vmreport.md
+**/agent.env

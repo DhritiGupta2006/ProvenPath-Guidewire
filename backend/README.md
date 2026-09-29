@@ -70,7 +70,7 @@ Javalin 5.6 on JDK 11. It's a single fat jar (`gradle :app:fatJar` → `app/buil
 
 **Plug-in points** (loaded by class name, so `:app` never compiles against them):
 - `PLANNER_CLASS` (default `provenpath.planner.Planner`, used when `LLM_MODE=live`) implements `PlannerPort`.
-- `PACKAGE_BUILDER_CLASS` (default `provenpath.pcexport.PackageBuilder`) implements `PackageBuilderPort`. Until it exists, `POST /deployments` answers `503 exporter_unavailable`.
+- `PACKAGE_BUILDER_CLASS` (default `provenpath.pcexport.PackageBuilder`) implements `PackageBuilderPort`. If it cannot be loaded, `POST /deployments` answers `503 exporter_unavailable`.
 
 **Deploy gate:** a package is built and queued only if the execution is approved, the approved review targets a PASSED run with a gate token, the stored proposal still hashes to the verified `proposalHash`, the ruleset is unchanged, and the HMAC token verifies. A BLOCKED run can never produce a package.
 
@@ -92,6 +92,9 @@ Javalin 5.6 on JDK 11. It's a single fat jar (`gradle :app:fatJar` → `app/buil
 
 API: plan §3 and `docs/events.md`. SSE clients must send `Accept: text/event-stream` (browsers' `EventSource` does); `Last-Event-ID` or `?after=N` resumes after seq N.
 
-## Modules still to come
-- `planner`: Gemini planner (Dhriti), see `team/DHRITI.md`
-- `pcexport`, `pcagent`: PolicyCenter package builder and VM agent (Chinmay), see `team/CHINMAY.md`
+## The other modules
+- `:planner` (`provenpath.planner`): the live Gemini planner (`LLM_MODE=live`). Tool calling over the `shared/tools` schemas (inlined for Gemini), repair loop, fixture fallback. `GEMINI_API_KEY`, `GEMINI_MODEL` (default `gemini-3.8-flash`).
+- `:pcexport` (`provenpath.pcexport`): `PackageBuilder` turns an approved PASSED proposal into the PolicyCenter overlay zip from `policycenter/overlay-template` (`PROVENPATH_PC_TEMPLATE_DIR`), writing the verified caps into the cov-term `minVal`/`maxVal`, with an HMAC-signed `provenpath-manifest.json`. Golden tests against `fixtures/proposal_demo_fixed.json`.
+- `:pcagent` (`provenpath.pcagent`, `provenpath-pcagent.jar`): runs next to PolicyCenter. Long-polls `/api/v1/pc-agent/next`, verifies signature + gate token + file hashes, backs up, writes into `modules/configuration`, restarts PolicyCenter only when something changed, confirms via ProductModelAPI and reports each step. See `policycenter/agent/README.md`.
+
+Build the two jars: `./gradlew :app:fatJar :pcagent:fatJar`. Tests: `./gradlew test` (62: core 34, app 12, eval 1, pcexport 7, pcagent 8).
