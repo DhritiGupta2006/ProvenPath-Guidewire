@@ -119,9 +119,17 @@ class Planner implements PlannerPort {
       repairIteration++
       var failures = collectFailures(verdict)
 
+      // Contract (docs/events.md): runId, iteration, failedRule, clauseId, expected, actual, reason.
+      // The full list rides along in "failures" for multi-rule repairs.
+      var first = failures.isEmpty() ? m({}) : failures.get(0)
       events.emit(executionId, "planner.repair", m({
           "runId" -> verdict.RunId,
           "iteration" -> (repairIteration + 1),
+          "failedRule" -> first.get("ruleCode"),
+          "clauseId" -> first.get("clauseId"),
+          "expected" -> first.get("expected"),
+          "actual" -> first.get("actual"),
+          "reason" -> first.get("reason"),
           "failures" -> failures,
           "note" -> "Feeding " + failures.size() + " failure(s) back to Gemini for repair"}))
 
@@ -170,7 +178,14 @@ class Planner implements PlannerPort {
 
       switch (name) {
         case "propose_product":
-          p = buildProposalFromArgs(executionId, args, 1)
+          // A re-propose during repair keeps the iteration, the proposal id and the clauses so far.
+          var prior = p
+          p = buildProposalFromArgs(executionId, args, prior == null ? 1 : prior.Iteration)
+          if (prior != null) {
+            p.ProposalId = prior.ProposalId
+            p.Clauses.addAll(prior.Clauses)
+            if (p.ProseSummary.Empty) p.ProseSummary = prior.ProseSummary
+          }
           result = m({"proposalId" -> p.ProposalId, "iteration" -> p.Iteration, "clauseCount" -> 0})
           events.emit(executionId, "planner.step", m({"step" -> stepN, "action" -> name,
               "note" -> "Proposal skeleton created", "mode" -> "live"}))

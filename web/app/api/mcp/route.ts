@@ -4,15 +4,13 @@
  * web/app/api/mcp/route.ts
  *
  * Implements the 4 ProvenPath tools as an MCP server using @modelcontextprotocol/sdk.
- * Each tool proxies to POST http://backend:8080/api/v1/tools/{name}.
- * Coordinate with Vaishnavi (she owns web/) before touching layout/components.
+ * Each tool proxies to POST {NEXT_PUBLIC_API_URL}/api/v1/tools/{name} on the Gosu backend.
  *
  * Test with: npx @modelcontextprotocol/inspector http://localhost:3000/api/mcp
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { NextRequest, NextResponse } from "next/server";
+import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { z } from "zod";
 
 // ─── Config ─────────────────────────────────────────────────────────────────
@@ -51,7 +49,7 @@ const ClauseSchema = z.object({
   deductibleInr: z.number().int().optional(),
   waitingHours: z.number().int().min(8).max(72).optional(),
   conditions: z.array(z.string()).optional(),
-  factors: z.record(z.number()).optional(),
+  factors: z.record(z.string(), z.number()).optional(),
   excludesPatternCodes: z.array(z.string()).optional(),
   citations: z.array(CitationSchema).min(1),
 });
@@ -192,58 +190,23 @@ function createServer(): McpServer {
   return server;
 }
 
-// ─── Route handlers (Streamable HTTP transport) ───────────────────────────────
+// ─── Route handlers (Streamable HTTP, stateless) ─────────────────────────────
+// Next route handlers speak the web Request/Response API, so this uses the SDK's web-standard
+// transport. Stateless: every POST gets a fresh server + transport (no session store to leak).
 
-// In-memory session store (stateless per-request is also fine for Streamable HTTP)
-const transports = new Map<string, StreamableHTTPServerTransport>();
-
-export async function POST(req: NextRequest): Promise<NextResponse> {
+export async function POST(req: Request): Promise<Response> {
   try {
-    const sessionId = req.headers.get("mcp-session-id") ?? undefined;
-
-    let transport: StreamableHTTPServerTransport;
-    if (sessionId && transports.has(sessionId)) {
-      transport = transports.get(sessionId)!;
-    } else {
-      transport = new StreamableHTTPServerTransport({
-        sessionIdGenerator: () => crypto.randomUUID(),
-        onsessioninitialized: (id) => {
-          transports.set(id, transport);
-        },
-      });
-      transport.onclose = () => {
-        if (transport.sessionId) {
-          transports.delete(transport.sessionId);
-        }
-      };
-      const server = createServer();
-      await server.connect(transport);
-    }
-
-    const body = await req.json().catch(() => null);
-    return await transport.handleRequest(req, new NextResponse(), body);
+    const transport = new WebStandardStreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    const server = createServer();
+    await server.connect(transport);
+    return await transport.handleRequest(req);
   } catch (err) {
-    console.error("[MCP] POST error:", err);
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    console.error('[MCP] POST error:', err);
+    return Response.json({ error: String(err) }, { status: 500 });
   }
 }
 
-export async function GET(req: NextRequest): Promise<NextResponse> {
-  const sessionId = req.headers.get("mcp-session-id");
-  if (!sessionId || !transports.has(sessionId)) {
-    return NextResponse.json({ error: "Session not found" }, { status: 404 });
-  }
-  const transport = transports.get(sessionId)!;
-  return transport.handleRequest(req, new NextResponse(), null);
-}
-
-export async function DELETE(req: NextRequest): Promise<NextResponse> {
-  const sessionId = req.headers.get("mcp-session-id");
-  if (!sessionId || !transports.has(sessionId)) {
-    return NextResponse.json({ error: "Session not found" }, { status: 404 });
-  }
-  const transport = transports.get(sessionId)!;
-  await transport.handleRequest(req, new NextResponse(), null);
-  transports.delete(sessionId);
-  return NextResponse.json({ ok: true });
-}
+// Stateless mode has no server-initiated stream and no sessions to delete.
+const notAllowed = () => Response.json({ jsonrpc: '2.0', error: { code: -32000, message: 'Method not allowed' }, id: null }, { status: 405 });
+export const GET = notAllowed;
+export const DELETE = notAllowed;

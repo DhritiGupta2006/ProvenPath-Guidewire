@@ -24,7 +24,8 @@ uses com.fasterxml.jackson.databind.node.ArrayNode
  */
 class GeminiClient {
 
-  static final var MODEL : String = "gemini-2.0-flash"
+  /** GEMINI_MODEL overrides the default without a code change (model names get retired). */
+  static final var MODEL : String = System.getenv("GEMINI_MODEL") ?: "gemini-2.0-flash"
   static final var API_BASE : String = "https://generativelanguage.googleapis.com/v1beta/models/"
   static final var MAPPER : ObjectMapper = new ObjectMapper()
 
@@ -67,8 +68,8 @@ class GeminiClient {
     var body = buildRequestBody(systemPrompt, userPrompt)
     var bodyJson = MAPPER.writeValueAsString(body)
 
-    var url = API_BASE + MODEL + ":generateContent?key=" + _apiKey
-    var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Content-Type", "application/json").timeout(Duration.ofSeconds(120)).POST(HttpRequest.BodyPublishers.ofString(bodyJson, StandardCharsets.UTF_8)).build()
+    var url = API_BASE + MODEL + ":generateContent"
+    var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Content-Type", "application/json").header("x-goog-api-key", _apiKey).timeout(Duration.ofSeconds(120)).POST(HttpRequest.BodyPublishers.ofString(bodyJson, StandardCharsets.UTF_8)).build()
 
     var response = _http.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
     if (response.statusCode() != 200) {
@@ -85,8 +86,8 @@ class GeminiClient {
     var body = buildRequestBodyWithHistory(systemPrompt, contents)
     var bodyJson = MAPPER.writeValueAsString(body)
 
-    var url = API_BASE + MODEL + ":generateContent?key=" + _apiKey
-    var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Content-Type", "application/json").timeout(Duration.ofSeconds(120)).POST(HttpRequest.BodyPublishers.ofString(bodyJson, StandardCharsets.UTF_8)).build()
+    var url = API_BASE + MODEL + ":generateContent"
+    var request = HttpRequest.newBuilder().uri(URI.create(url)).header("Content-Type", "application/json").header("x-goog-api-key", _apiKey).timeout(Duration.ofSeconds(120)).POST(HttpRequest.BodyPublishers.ofString(bodyJson, StandardCharsets.UTF_8)).build()
 
     var response = _http.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8))
     if (response.statusCode() != 200) {

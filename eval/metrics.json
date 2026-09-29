@@ -1,38 +1,38 @@
 {
-  "total" : 12,
+  "total" : 40,
   "falsePassRate" : 0.0,
   "falsePassCount" : 0,
   "falseBlockRate" : 0.0,
   "provenanceCompleteness" : 1.0,
   "accuracy" : 1.0,
-  "falsePassDenominator" : 6,
+  "falsePassDenominator" : 20,
   "perLayer" : {
     "CONSISTENCY" : {
-      "passed" : 64,
-      "failed" : 0
+      "passed" : 213,
+      "failed" : 2
     },
     "GROUNDING" : {
-      "passed" : 11,
-      "failed" : 1
+      "passed" : 37,
+      "failed" : 2
     },
     "SOURCE" : {
-      "passed" : 264,
+      "passed" : 882,
       "failed" : 3
     },
     "RULE_MATCH" : {
-      "passed" : 39,
-      "failed" : 1
+      "passed" : 128,
+      "failed" : 2
     },
     "TYPE" : {
-      "passed" : 267,
-      "failed" : 0
+      "passed" : 905,
+      "failed" : 1
     },
     "RANGE" : {
-      "passed" : 81,
-      "failed" : 2
+      "passed" : 268,
+      "failed" : 12
     }
   },
-  "falseBlockDenominator" : 6,
+  "falseBlockDenominator" : 20,
   "perItem" : [ {
     "actual" : "PASSED",
     "expectedFailingRule" : null,
@@ -46,7 +46,56 @@
     "correct" : true,
     "expected" : "PASSED",
     "failingRules" : [ ],
+    "id" : "compliant_bi_waiting_72h"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_bi_waiting_8h"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_cert_in_explicit"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_deductible_10pct"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_deductible_1pct"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_extortion_exactly_50pct"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
     "id" : "compliant_high_limit"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_large_enterprise"
   }, {
     "actual" : "PASSED",
     "expectedFailingRule" : null,
@@ -67,6 +116,20 @@
     "correct" : true,
     "expected" : "PASSED",
     "failingRules" : [ ],
+    "id" : "compliant_mandatory_only"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_max_aggregate"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
     "id" : "compliant_max_waiting"
   }, {
     "actual" : "PASSED",
@@ -74,7 +137,56 @@
     "correct" : true,
     "expected" : "PASSED",
     "failingRules" : [ ],
+    "id" : "compliant_min_aggregate"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_min_premium"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
     "id" : "compliant_minimal"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_rating_max_factor"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_rating_min_factor"
+  }, {
+    "actual" : "PASSED",
+    "expectedFailingRule" : null,
+    "correct" : true,
+    "expected" : "PASSED",
+    "failingRules" : [ ],
+    "id" : "compliant_with_fines_coverage"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-001" ],
+    "id" : "noncompliant_agg_above_max"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-001" ],
+    "id" : "noncompliant_agg_below_min"
   }, {
     "actual" : "BLOCKED",
     "expectedFailingRule" : "CYB-SRC-002",
@@ -84,11 +196,53 @@
     "id" : "noncompliant_altered_snippet"
   }, {
     "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-004",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-004" ],
+    "id" : "noncompliant_bi_waiting_too_long"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-004",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-004" ],
+    "id" : "noncompliant_bi_waiting_too_short"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-CON-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-CON-002", "CYB-RNG-003" ],
+    "id" : "noncompliant_deductible_exceeds_limit"
+  }, {
+    "actual" : "BLOCKED",
     "expectedFailingRule" : "CYB-RNG-002",
     "correct" : true,
     "expected" : "BLOCKED",
     "failingRules" : [ "CYB-RNG-002" ],
     "id" : "noncompliant_extortion_51pct"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-002" ],
+    "id" : "noncompliant_extortion_51pct_exact"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RM-003",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RM-003" ],
+    "id" : "noncompliant_extortion_no_law_enforcement"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-002",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-002" ],
+    "id" : "noncompliant_extortion_off_by_one"
   }, {
     "actual" : "BLOCKED",
     "expectedFailingRule" : "CYB-SRC-002",
@@ -105,6 +259,13 @@
     "id" : "noncompliant_injected_compliant"
   }, {
     "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-TYPE-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-TYPE-001" ],
+    "id" : "noncompliant_invalid_pattern_code"
+  }, {
+    "actual" : "BLOCKED",
     "expectedFailingRule" : "CYB-GRD-001",
     "correct" : true,
     "expected" : "BLOCKED",
@@ -117,6 +278,41 @@
     "expected" : "BLOCKED",
     "failingRules" : [ "CYB-RM-002" ],
     "id" : "noncompliant_missing_war_excl"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-007",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-007" ],
+    "id" : "noncompliant_premium_below_floor"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-GRD-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-GRD-001" ],
+    "id" : "noncompliant_prose_number_mismatch"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-006",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-006" ],
+    "id" : "noncompliant_rating_factor_too_high"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-CON-001",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-CON-001" ],
+    "id" : "noncompliant_sum_exceeds_aggregate"
+  }, {
+    "actual" : "BLOCKED",
+    "expectedFailingRule" : "CYB-RNG-005",
+    "correct" : true,
+    "expected" : "BLOCKED",
+    "failingRules" : [ "CYB-RNG-005" ],
+    "id" : "noncompliant_turnover_above_max"
   } ],
   "falseBlockCount" : 0
 }
