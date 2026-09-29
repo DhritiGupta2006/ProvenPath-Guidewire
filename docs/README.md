@@ -5,6 +5,7 @@
 | [`ProvenPath-Explained.pdf`](ProvenPath-Explained.pdf) | The whole system in plain language: pipeline, the 23 rules, hashes and signatures, package and agent, every word in the UI, glossaries |
 | [`SETUP.md`](SETUP.md) | Running everything without Docker (laptops and the VM) |
 | [`events.md`](events.md) | The event contract streamed to Mission Control (types and payloads) |
+| [`ROADMAP.md`](ROADMAP.md) | v1 (SME Cyber, done) and v2 (every product line: registry, rule packs with real sources, PolicyCenter lines) |
 | [`policycenter.md`](policycenter.md) | Facts measured on the real PolicyCenter 10 VM: versions, SOAP API, restart times, what is installed |
 
 ## `plan/`

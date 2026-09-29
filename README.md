@@ -2,6 +2,8 @@
 
 **AI proposes. Rules decide. People approve.**
 
+**v1.0: SME Cyber.** v2 brings every product line; see [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
 ProvenPath is a deterministic pre-commit compliance gate between an AI planner and **Guidewire PolicyCenter 10**. A planner (Google Gemini) drafts an insurance product (here: SME cyber insurance, product `SMCyber`); a Gosu rule graph of 23 rules in 6 layers verifies every clause; a named Compliance Reviewer approves; only then is a signed package built, pulled by an agent next to PolicyCenter, installed, and confirmed through PolicyCenter's ProductModelAPI. A blocked or unapproved proposal can never write a file into PolicyCenter.
 
 The full explanation of the pipeline, every rule and every word in the UI: [`docs/ProvenPath-Explained.pdf`](docs/ProvenPath-Explained.pdf).
