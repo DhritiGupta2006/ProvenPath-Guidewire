@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "ransomHasLawEnforcementCondition"
-source_code: IRDAI-CYB-G-2024-S4.3
+source_code: IRDAI-CYBER-2021-MW-EXT
 error_template: "Law enforcement condition missing"

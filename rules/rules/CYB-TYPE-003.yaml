@@ -12,5 +12,5 @@ logic:
     - operator: IN
       field: "clause.category"
       value: ["CyberFirstParty", "CyberThirdParty", "CyberExclusion", "CyberRating"]
-source_code: IRDAI-CYB-G-2024-S2.3
+source_code: SMCYBER-PC-SPEC-3
 error_template: "Invalid existence {actual} or category"

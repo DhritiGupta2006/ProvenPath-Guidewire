@@ -12,5 +12,5 @@ logic:
     - operator: LTE
       field: "clause.waitingHours"
       value: 72
-source_code: IRDAI-CYB-G-2024-S3.3
+source_code: SMCYBER-UWG-2026-4
 error_template: "BI waiting period {actual} not between 8 and 72"

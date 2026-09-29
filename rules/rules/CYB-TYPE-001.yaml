@@ -12,5 +12,5 @@ logic:
     - operator: GTE
       field: "clause.limitMaxInr"
       value: 0
-source_code: IRDAI-CYB-G-2024-S2.1
+source_code: SMCYBER-PC-SPEC-1
 error_template: "Pattern code {actual} invalid or limit negative"

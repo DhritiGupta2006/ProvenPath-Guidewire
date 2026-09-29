@@ -16,7 +16,7 @@ export const RULES_FALLBACK: Pick<RuleDefinition, 'ruleCode' | 'name' | 'layer'>
   { ruleCode: 'CYB-RNG-002', name: 'Extortion sublimit <= 50% of aggregate', layer: 'RANGE' },
   { ruleCode: 'CYB-RNG-003', name: 'Deductible 1-10% of limit', layer: 'RANGE' },
   { ruleCode: 'CYB-RNG-004', name: 'BI waiting period 8-72 hours', layer: 'RANGE' },
-  { ruleCode: 'CYB-RNG-005', name: 'Turnover <= 250Cr', layer: 'RANGE' },
+  { ruleCode: 'CYB-RNG-005', name: 'Turnover within the MSME medium-enterprise limit (500Cr)', layer: 'RANGE' },
   { ruleCode: 'CYB-RNG-006', name: 'Rating factors 0.5-3.0', layer: 'RANGE' },
   { ruleCode: 'CYB-RNG-007', name: 'Minimum premium floor', layer: 'RANGE' },
   { ruleCode: 'CYB-CON-001', name: 'Sum of first-party sublimits <= aggregate', layer: 'CONSISTENCY' },
@@ -137,18 +137,19 @@ export function TamperStory() {
           </h2>
           <Reveal delay={0.2}>
             <p className="mt-5 text-lg leading-relaxed text-muted">
-              Models paraphrase. Regulators don&apos;t. Mission Control has a tamper test that edits a single word of a cited regulation and sends it to
-              the real gate. It is blocked at the source layer, with nothing stored and nothing deployed.
+              Models paraphrase. Regulators don&apos;t. Every citation is checked against the official text, byte for byte. Mission Control has a
+              tamper test that edits one word of the real CERT-In direction and sends it to the real gate. It is blocked at the source layer, with
+              nothing stored and nothing deployed.
             </p>
           </Reveal>
         </div>
         <Reveal delay={0.1}>
           <div className="rounded-3xl border border-line bg-surface/80 p-7 backdrop-blur">
             <div className="flex items-center gap-2 font-mono text-[11px] text-muted">
-              <BookOpen className="h-3.5 w-3.5 text-accent" /> IRDAI-CYB-G-2024-S4.1 · §4.1
+              <BookOpen className="h-3.5 w-3.5 text-accent" /> CERT-In Directions, 28 Apr 2022 · Direction (ii)
             </div>
-            <p className="mt-4 font-serif text-2xl leading-snug text-fg">
-              “Every SME Cyber Insurance policy{' '}
+            <p className="mt-4 font-serif text-xl leading-snug text-fg">
+              “Any service provider, intermediary, data centre, body corporate and Government organisation{' '}
               <span className="relative inline-block">
                 <motion.span
                   initial={{ opacity: 1 }}
@@ -176,7 +177,7 @@ export function TamperStory() {
                   may
                 </motion.span>
               </span>{' '}
-              include at minimum Data Breach Response Coverage…”
+              mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents…”
             </p>
             <motion.div
               initial={{ opacity: 0, y: 12 }}

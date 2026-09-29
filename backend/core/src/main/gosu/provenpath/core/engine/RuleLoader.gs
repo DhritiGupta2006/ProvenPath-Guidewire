@@ -94,6 +94,10 @@ class RuleLoader {
         }
       }
       src.Jurisdiction = (entry.get("jurisdiction") as String) ?: "IN"
+      src.Kind = entry.get("kind") as String
+      src.Issuer = entry.get("issuer") as String
+      src.Document = entry.get("document") as String
+      src.Url = entry.get("url") as String
       sourcesList.add(src)
       _sourcesByCode.put(src.SourceCode, src)
     }

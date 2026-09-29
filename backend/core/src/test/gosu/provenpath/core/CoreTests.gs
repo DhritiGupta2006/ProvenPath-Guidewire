@@ -497,9 +497,9 @@ class CoreTests {
     unknownClause.ExcludesPatternCodes = new ArrayList<String>()
     unknownClause.Citations = new ArrayList<provenpath.contracts.Citation>()
     var cit = new provenpath.contracts.Citation()
-    cit.SourceCode = "IRDAI-CYB-G-2024-S2.1"
-    cit.Section = "S2.1"
-    cit.TextSnippet = "All coverage and exclusion pattern codes for SME Cyber Insurance products shall conform to the naming convention"
+    cit.SourceCode = "SMCYBER-PC-SPEC-1"
+    cit.Section = "1"
+    cit.TextSnippet = "SMCyber clause pattern codes follow SMCyber[A-Za-z]+(Cov|Excl)"
     unknownClause.Citations.add(cit)
 
     proposal.Clauses.add(unknownClause)

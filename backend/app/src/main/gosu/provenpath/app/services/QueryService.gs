@@ -100,6 +100,7 @@ class QueryService {
             "sourceCode" -> cit.SourceCode, "section" -> cit.Section, "textSnippet" -> cit.TextSnippet,
             "found" -> (src != null), "title" -> src?.get("title"), "fullText" -> src?.get("full_text"),
             "effectiveDate" -> src?.get("effective_date"), "jurisdiction" -> src?.get("jurisdiction"),
+            "kind" -> src?.get("kind"), "issuer" -> src?.get("issuer"), "document" -> src?.get("document"), "url" -> src?.get("url"),
             "snippetMatchesSource" -> (src != null and cit.TextSnippet != null and (src.get("full_text") as String).contains(cit.TextSnippet))}))
       }
     }

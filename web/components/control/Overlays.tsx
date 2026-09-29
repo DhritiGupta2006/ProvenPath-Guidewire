@@ -2,12 +2,21 @@
 
 import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
-import { BookOpen, Check, X } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Check, X } from 'lucide-react';
 import { EvalMetrics, ProvenanceResponse } from '@/lib/contracts';
 import { api, ApiError, inr } from '@/lib/api';
 import { LAYER_LABEL } from '@/lib/rules-catalog';
 import { Ticker } from '@/components/ui/primitives';
 import { StatusIcon } from './Verdicts';
+
+const OFFICIAL_KINDS = ['REGULATION', 'REGULATOR_GUIDANCE'];
+const KIND_LABEL: Record<string, string> = {
+  REGULATION: 'Law / regulation · verbatim',
+  REGULATOR_GUIDANCE: 'Regulator guidance · verbatim',
+  UNDERWRITING_GUIDELINE: 'Our underwriting guideline · not a regulation',
+  TECHNICAL_SPEC: 'Our PolicyCenter spec',
+  GOVERNANCE: 'Our AI governance policy',
+};
 
 /** Clause → the rules that checked it → the regulation it cites, straight from GET /provenance. */
 export function ProvenanceSheet({ clauseId, executionId, onClose }: { clauseId: string | null; executionId: string | null; onClose: () => void }) {
@@ -142,16 +151,31 @@ export function ProvenanceSheet({ clauseId, executionId, onClose }: { clauseId: 
                               {!ci.found ? 'source not found' : ci.snippetMatchesSource ? 'matches the source byte for byte' : 'does not match the source'}
                             </span>
                           </div>
+                          {ci.kind && (
+                            <span
+                              className={`mt-3 inline-block rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                                OFFICIAL_KINDS.includes(ci.kind) ? 'border-accent/40 text-accent' : 'border-line-strong text-muted'
+                              }`}
+                            >
+                              {KIND_LABEL[ci.kind] || ci.kind}
+                            </span>
+                          )}
                           {ci.title && <div className="mt-2 text-sm text-fg">{ci.title}</div>}
+                          {ci.document && <div className="mt-1 text-xs text-muted">{ci.document}</div>}
                           <div className="mt-1 text-[11px] text-faint">
-                            §{ci.section} · {ci.jurisdiction || '—'} · effective {ci.effectiveDate || '—'}
+                            {ci.issuer ? `${ci.issuer} · ` : ''}§{ci.section} · {ci.jurisdiction || '—'} · in force from {ci.effectiveDate || '—'}
                           </div>
                           <blockquote className="mt-4 border-l-2 border-accent/40 pl-4 font-serif text-lg leading-snug text-fg/90">“{ci.textSnippet}”</blockquote>
+                          {ci.url && (
+                            <a href={ci.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1 text-xs text-accent hover:underline">
+                              Read the official document <ArrowUpRight className="h-3.5 w-3.5" />
+                            </a>
+                          )}
                         </div>
                       ))}
                     </div>
                   </div>
-                  <p className="text-[11px] text-faint">Curated, illustrative IRDAI-style source set. A rule-graph check, not a legal opinion.</p>
+                  <p className="text-[11px] text-faint">Official texts are quoted verbatim from the linked documents; underwriting, technical and governance sources are our own and labelled as such. A rule-graph check, not a legal opinion.</p>
                 </>
               )}
             </div>

@@ -43,12 +43,13 @@ class Repository {
   }
 
   function upsertSource(src : RegulatorySource) {
-    _db.update("INSERT INTO pp_regulatory_source (source_code, title, section, full_text, text_sha256, effective_date, expiry_date, jurisdiction) " +
-        "VALUES (?, ?, ?, ?, ?, ?::date, ?::date, ?) ON CONFLICT (source_code) DO UPDATE SET title = EXCLUDED.title, " +
+    _db.update("INSERT INTO pp_regulatory_source (source_code, title, section, full_text, text_sha256, effective_date, expiry_date, jurisdiction, kind, issuer, document, url) " +
+        "VALUES (?, ?, ?, ?, ?, ?::date, ?::date, ?, ?, ?, ?, ?) ON CONFLICT (source_code) DO UPDATE SET title = EXCLUDED.title, " +
         "section = EXCLUDED.section, full_text = EXCLUDED.full_text, text_sha256 = EXCLUDED.text_sha256, " +
-        "effective_date = EXCLUDED.effective_date, expiry_date = EXCLUDED.expiry_date, jurisdiction = EXCLUDED.jurisdiction, updated_at = NOW()",
+        "effective_date = EXCLUDED.effective_date, expiry_date = EXCLUDED.expiry_date, jurisdiction = EXCLUDED.jurisdiction, kind = EXCLUDED.kind, issuer = EXCLUDED.issuer, " +
+        "document = EXCLUDED.document, url = EXCLUDED.url, updated_at = NOW()",
         {src.SourceCode, src.Title ?: src.SourceCode, src.Section, src.FullText, Hashing.sha256Hex(src.FullText ?: ""),
-         src.EffectiveDate?.toString(), src.ExpiryDate?.toString(), src.Jurisdiction ?: "IN"})
+         src.EffectiveDate?.toString(), src.ExpiryDate?.toString(), src.Jurisdiction ?: "IN", src.Kind, src.Issuer, src.Document, src.Url})
   }
 
   function upsertRule(rule : RuleDefinition, rulesetHash : String) {
@@ -74,7 +75,7 @@ class Repository {
   }
 
   function source(sourceCode : String) : Map<String, Object> {
-    return _db.queryOne("SELECT source_code, title, section, full_text, text_sha256, effective_date, expiry_date, jurisdiction " +
+    return _db.queryOne("SELECT source_code, title, section, full_text, text_sha256, effective_date, expiry_date, jurisdiction, kind, issuer, document, url " +
         "FROM pp_regulatory_source WHERE source_code = ?", {sourceCode})
   }
 

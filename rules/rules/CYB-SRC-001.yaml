@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "clauseHasCitation"
-source_code: IRDAI-CYB-G-2024-S5.1
+source_code: PP-AIGOV-2026-1
 error_template: "Clause lacks citations"

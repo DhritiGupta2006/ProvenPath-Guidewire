@@ -6,7 +6,7 @@ import { Layer } from './contracts';
  */
 export const RULE_LAYERS: { layer: Layer; label: string; short: string; description: string }[] = [
   { layer: 'TYPE', label: 'Type & schema', short: 'Type', description: 'INR money fields, pattern codes and the owning PolicyCenter entity are well formed.' },
-  { layer: 'RANGE', label: 'Range & limits', short: 'Range', description: 'Aggregate, sublimits, deductibles and waiting periods sit inside regulated bounds.' },
+  { layer: 'RANGE', label: 'Range & limits', short: 'Range', description: 'Aggregate, sublimits, deductibles and waiting periods sit inside the product’s filed bounds; turnover inside the MSME limit.' },
   { layer: 'CONSISTENCY', label: 'Consistency', short: 'Consistency', description: 'Sublimits fit the aggregate, deductibles stay below limits, nothing contradicts itself.' },
   { layer: 'RULE_MATCH', label: 'Rule match', short: 'Rule match', description: 'Mandatory coverages, exclusions and conditions such as CERT-In 6-hour notice are present.' },
   { layer: 'SOURCE', label: 'Source integrity', short: 'Source', description: 'Every citation exists and matches the stored regulation byte for byte.' },

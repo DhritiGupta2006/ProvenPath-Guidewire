@@ -346,6 +346,11 @@ export interface ProvenanceCitation {
   fullText?: string;
   effectiveDate?: string;
   jurisdiction?: string;
+  /** REGULATION | REGULATOR_GUIDANCE (verbatim official text) | UNDERWRITING_GUIDELINE | TECHNICAL_SPEC | GOVERNANCE (our own) */
+  kind?: string | null;
+  issuer?: string | null;
+  document?: string | null;
+  url?: string | null;
   snippetMatchesSource: boolean;
 }
 

@@ -155,7 +155,7 @@ function MissionControl() {
 
   /** Take the compliant demo proposal, change one word of a cited regulation, send it to the real gate. */
   const tamperTest = async () => {
-    notify({ tone: 'muted', title: 'Tamper test running', detail: 'Changing “shall” to “may” in IRDAI §4.1…' });
+    notify({ tone: 'muted', title: 'Tamper test running', detail: 'Changing “shall” to “may” in CERT-In Direction (ii)…' });
     try {
       const res = await fetch('/api/fixtures/proposal_demo_fixed.json', { cache: 'no-store' });
       if (!res.ok) throw new Error('fixture proposal not found');

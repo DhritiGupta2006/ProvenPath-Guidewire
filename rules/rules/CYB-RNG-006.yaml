@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "ratingFactorsInRange"
-source_code: IRDAI-CYB-G-2024-S3.6
+source_code: SMCYBER-UWG-2026-5
 error_template: "Rating factor out of range"

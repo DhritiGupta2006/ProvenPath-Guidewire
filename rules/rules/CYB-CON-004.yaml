@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "noDuplicatePatternCodes"
-source_code: IRDAI-CYB-G-2024-S6.4
+source_code: SMCYBER-PC-SPEC-4
 error_template: "Duplicate pattern code found"

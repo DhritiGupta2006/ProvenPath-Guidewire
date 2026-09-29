@@ -175,7 +175,7 @@ export default function Landing() {
         <footer className="border-t border-line">
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-8 text-xs text-faint md:flex-row">
             <Wordmark />
-            <span>Curated, illustrative IRDAI-style source set. A rule-graph check, not legal advice.</span>
+            <span>Rules cite official texts (IRDAI, CERT-In, MeitY, MSME Ministry) and our labelled underwriting guideline. A rule-graph check, not legal advice.</span>
           </div>
         </footer>
       </main>

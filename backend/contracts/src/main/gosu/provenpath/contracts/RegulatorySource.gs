@@ -12,6 +12,11 @@ class RegulatorySource {
   var _effectiveDate : LocalDate as EffectiveDate
   var _expiryDate : LocalDate as ExpiryDate
   var _jurisdiction : String as Jurisdiction
+  /** REGULATION, REGULATOR_GUIDANCE (verbatim official text) or UNDERWRITING_GUIDELINE, TECHNICAL_SPEC, GOVERNANCE (our own). */
+  var _kind : String as Kind
+  var _issuer : String as Issuer
+  var _document : String as Document
+  var _url : String as Url
 
   construct() {}
 }

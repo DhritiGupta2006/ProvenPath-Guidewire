@@ -29,17 +29,19 @@
         "existence": "Required",
         "limitMaxInr": 2000000,
         "deductibleInr": 100000,
-        "conditions": ["cert-in-6-hour-reporting"],
+        "conditions": [
+          "cert-in-6-hour-reporting"
+        ],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.1",
-            "section": "4.1",
-            "textSnippet": "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages."
+            "sourceCode": "CERT-IN-2022-DIR-ii",
+            "section": "Direction (ii)",
+            "textSnippet": "Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents."
           },
           {
-            "sourceCode": "CERT-IN-DIR-2022-6HR",
-            "section": "70B(6)",
-            "textSnippet": "All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily report cyber incidents to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents."
+            "sourceCode": "IRDAI-CYBER-2021-5.5.2a-R",
+            "section": "5.5.2(a)",
+            "textSnippet": "Insured could also incur substantial Response costs that may include (i) notification expenses towards the affected third parties and regulators in such an event (ii) credit monitoring services for a defined period - these include the monitoring of one's credit history for a specified period for to detect any suspicious activity or unauthorized charges. It also may provide special alerts when there are noticeable changes to one's credit history (iii) cost of identifying and preserving relevant Data on the Company’s Computer System"
           }
         ]
       },
@@ -56,9 +58,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.1",
-            "section": "4.1",
-            "textSnippet": "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages."
+            "sourceCode": "IRDAI-CYBER-2021-5.5.2a",
+            "section": "5.5.2(a)",
+            "textSnippet": "a) Privacy and Data Breach Liability including customer notification and credit monitoring costs: Coverage is offered for Damages and Defence Costs for a claim made against the Insured by any affected person or a client resulting from a privacy beach or a data breach for which the Insured is legally liable."
           }
         ]
       },
@@ -72,17 +74,19 @@
         "existence": "Suggested",
         "limitMaxInr": 2550000,
         "deductibleInr": 100000,
-        "conditions": ["law-enforcement-notification"],
+        "conditions": [
+          "law-enforcement-notification"
+        ],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S3.4",
-            "section": "3.4",
-            "textSnippet": "The sublimit for Cyber Extortion or Ransomware coverage shall not exceed 50% of the policy aggregate limit to prevent disproportionate exposure to extortion-related claims."
+            "sourceCode": "IRDAI-CYBER-2021-5.5.1b",
+            "section": "5.5.1(b)",
+            "textSnippet": "b) Cyber Extortion: Coverage is offered for Cyber Extortion Loss that the Insured incurs solely and directly as a result of a Cyber Extortion Threat. Such loss is triggered when a hacker breaks into computer system and threatens to commit a wicked act like damaging the data, introducing a virus, initiating a denial of service attack, or releasing confidential data unless the insured pays a specified sum. Coverage typically extends to any extortion payment that the company has to make and expenses incurred while responding to the demand."
           },
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.3",
-            "section": "4.3",
-            "textSnippet": "Any coverage for cyber extortion or ransomware payments shall include a mandatory condition requiring the insured to notify law enforcement authorities before any payment is made."
+            "sourceCode": "IRDAI-CYBER-2021-MW-EXT",
+            "section": "Annexure, Model Policy Wordings, cover iii",
+            "textSnippet": "As a condition for payment under this cover the Insured shall: i. keep the terms and conditions of this Cyber Extortion Cover confidential, unless disclosure to law enforcement authorities is required; and ii. Take all reasonable steps to notify and cooperate with the appropriate law enforcement authorities; and iii. Take all reasonable steps (including the involvement of a security consultant with the Insurer’s prior written consent), to effectively mitigate the Cyber Extortion Loss."
           }
         ]
       },
@@ -97,9 +101,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.2",
-            "section": "4.2",
-            "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+            "sourceCode": "IRDAI-CYBER-2021-5.8",
+            "section": "5.8",
+            "textSnippet": "This clause excludes coverage for loss from acts of war, terrorism, invasion, and/or insurrection. Since the repercussions of state-sponsored, political, and ideological cyber-attacks could be too vast and across industries, coverage for such events is excluded."
           }
         ]
       },
@@ -114,9 +118,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.2",
-            "section": "4.2",
-            "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+            "sourceCode": "IRDAI-CYBER-2021-5.8",
+            "section": "5.8",
+            "textSnippet": "Cyber policies typically exclude any cyber incidents which existed prior to the insurance policy commencement."
           }
         ]
       },
@@ -131,9 +135,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.2",
-            "section": "4.2",
-            "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+            "sourceCode": "IRDAI-CYBER-2021-5.8",
+            "section": "5.8",
+            "textSnippet": "Any fraudulent, dishonest activity, willful violation, breach of law done by the insured stands excluded from scope of coverage."
           }
         ]
       },
@@ -148,9 +152,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S4.2",
-            "section": "4.2",
-            "textSnippet": "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl)."
+            "sourceCode": "IRDAI-CYBER-2021-5.8",
+            "section": "5.8",
+            "textSnippet": "This clause excludes any claims arising due to any electrical or mechanical failure of infrastructure including any electrical power interruption, surge , brown out , black out , failure of telephone lines , data transmission lines , any satellite failure or any other telecom / network infrastructure which are not under the control of the insured / the outsource service provider."
           }
         ]
       },
@@ -168,9 +172,9 @@
         "conditions": [],
         "citations": [
           {
-            "sourceCode": "IRDAI-CYB-G-2024-S3.6",
-            "section": "3.6",
-            "textSnippet": "All rating factors applied in premium calculation for SME Cyber Insurance shall fall within the range of 0.50 to 3.00 inclusive."
+            "sourceCode": "SMCYBER-UWG-2026-5",
+            "section": "5",
+            "textSnippet": "Each rating factor applied to the SMCyber base rate shall be between 0.5 and 3.0."
           }
         ]
       }

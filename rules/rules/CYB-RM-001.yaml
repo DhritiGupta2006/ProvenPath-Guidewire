@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "mandatoryCoveragesPresent"
-source_code: IRDAI-CYB-G-2024-S4.1
+source_code: SMCYBER-UWG-2026-9
 error_template: "Mandatory coverages missing"

@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "finesHasInsurabilityCondition"
-source_code: IRDAI-CYB-G-2024-S4.4
+source_code: IRDAI-CYBER-2021-5.5.2d
 error_template: "Insurability condition missing"

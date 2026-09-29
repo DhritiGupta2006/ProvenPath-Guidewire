@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "noExclusionNullifiesRequiredCoverage"
-source_code: IRDAI-CYB-G-2024-S6.3
+source_code: SMCYBER-UWG-2026-8
 error_template: "Required coverage nullified by exclusion"

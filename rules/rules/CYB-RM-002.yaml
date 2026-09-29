@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "mandatoryExclusionsPresent"
-source_code: IRDAI-CYB-G-2024-S4.2
+source_code: IRDAI-CYBER-2021-5.8
 error_template: "Mandatory exclusions missing"

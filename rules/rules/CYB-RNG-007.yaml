@@ -7,5 +7,5 @@ logic:
   operator: GTE
   field: "proposal.minimumPremiumInr"
   value: 10000
-source_code: IRDAI-CYB-G-2024-S3.7
+source_code: SMCYBER-UWG-2026-6
 error_template: "Premium {actual} below floor of 10000"

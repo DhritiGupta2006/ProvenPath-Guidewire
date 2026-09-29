@@ -7,5 +7,5 @@ logic:
   operator: LTE
   field: "clause.limitMaxInr"
   value_ref: "proposal.aggregateLimitInr * 0.5"
-source_code: IRDAI-CYB-G-2024-S3.4
+source_code: SMCYBER-UWG-2026-2
 error_template: "Extortion sublimit INR {actual} exceeds 50% of aggregate (INR {expected})"

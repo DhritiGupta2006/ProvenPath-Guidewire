@@ -7,6 +7,6 @@ logic:
   operator: EQ
   field: "clause.owningEntityType"
   value: "GeneralLiabilityLine"
-source_code: IRDAI-CYB-G-2024-S2.2
+source_code: SMCYBER-PC-SPEC-2
 error_template: "Invalid owning entity type {actual}"
 pc_mapping: "ClausePattern.owningEntityType"

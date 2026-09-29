@@ -285,6 +285,8 @@ class Planner implements PlannerPort {
         "7. Required exclusions: SMCyberWarExcl, SMCyberPriorKnownExcl, SMCyberIntentionalActsExcl, SMCyberInfraFailureExcl.\n" +
         "8. Extortion coverage (SMCyberExtortionCov) limitMaxInr MUST be <= aggregateLimitInr * 0.5.\n" +
         "9. minimumPremiumInr MUST be >= 10000.\n" +
+        "9b. turnoverInr MUST be <= 5000000000 (MSME medium-enterprise limit, S.O. 1364(E) 2025).\n" +
+        "9c. Cite official sources (IRDAI-CYBER-2021-*, CERT-IN-*) for coverages and exclusions. A citation textSnippet must be an exact substring of one full_text below, and the source must be in force on targetEffectiveDate.\n" +
         "10. All monetary values in INR integers.\n\n" +
         "REGULATORY SOURCES (cite these VERBATIM):\n" + ragContext
   }
@@ -321,17 +323,16 @@ class Planner implements PlannerPort {
         relevant.add(src)
       }
     }
-    // If < 6 relevant, add first sources
-    if (relevant.size() < 6) {
-      for (src in _sources) {
-        if (!relevant.contains(src)) relevant.add(src)
-        if (relevant.size() >= 12) break
-      }
+    // The whole registry is small (~27 sources, ~9 KB) and the model can only quote verbatim what it is shown,
+    // so the keyword hits come first and every other source follows.
+    for (src in _sources) {
+      if (!relevant.contains(src)) relevant.add(src)
     }
 
     var sb = new java.lang.StringBuilder()
     for (src in relevant) {
       sb.append("source_code: ").append(src.SourceCode).append("\n")
+      sb.append("section: ").append(src.Section).append("\n")
       sb.append("title: ").append(src.Title).append("\n")
       sb.append("full_text: ").append(src.FullText).append("\n\n")
     }

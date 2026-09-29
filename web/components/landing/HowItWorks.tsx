@@ -124,7 +124,7 @@ function ReviewVisual() {
             className="flex items-center gap-2 rounded-lg bg-surface-3/60 px-3 py-2 text-xs"
           >
             <Check className="h-3.5 w-3.5 text-pass" /> {c}
-            <span className="ml-auto font-mono text-[10px] text-faint">IRDAI</span>
+            <span className="ml-auto font-mono text-[10px] text-faint">cited</span>
           </motion.div>
         ))}
       </div>

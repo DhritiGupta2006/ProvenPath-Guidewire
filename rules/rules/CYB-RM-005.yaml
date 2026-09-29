@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "certIn6HourConditionPresent"
-source_code: CERT-IN-DIR-2022-6HR
+source_code: CERT-IN-2022-DIR-ii
 error_template: "CERT-In 6-hour condition missing"

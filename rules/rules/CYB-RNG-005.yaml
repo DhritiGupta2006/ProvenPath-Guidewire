@@ -1,11 +1,11 @@
 rule_code: CYB-RNG-005
-name: Turnover <= 250Cr
+name: Turnover within the MSME medium-enterprise limit (500Cr)
 layer: RANGE
 applies_to: "proposal"
 depends_on: []
 logic:
   operator: LTE
   field: "proposal.turnoverInr"
-  value: 2500000000
-source_code: IRDAI-CYB-G-2024-S3.5
-error_template: "Turnover {actual} exceeds 250Cr"
+  value: 5000000000
+source_code: MSME-2025-SO1364E
+error_template: "Turnover {actual} exceeds the MSME medium-enterprise limit of 500Cr"

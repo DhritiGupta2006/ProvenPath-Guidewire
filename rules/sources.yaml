@@ -1,168 +1,330 @@
+# Regulatory and internal sources cited by the SMCyber rules and by every proposal clause.
+# kind: REGULATION / REGULATOR_GUIDANCE = verbatim text of an official Indian document (url = where it is published).
+#       Whitespace from the PDF layout is joined into single spaces and running page headers are dropped; nothing else is changed.
+#       UNDERWRITING_GUIDELINE / TECHNICAL_SPEC / GOVERNANCE = our own documents, labelled as such (not regulation).
+# CYB-SRC-002 requires every citation snippet to be a byte-exact substring of full_text.
 sources:
-  - source_code: IRDAI-CYB-G-2024-S2.1
-    title: Pattern Code and Money Field Validation
-    section: "2.1"
-    full_text: "All coverage and exclusion pattern codes for SME Cyber Insurance products shall conform to the naming convention SMCyber[A-Za-z]+(Cov|Excl) as registered in the product model. All monetary fields including limits, deductibles, and premiums shall be denominated in Indian Rupees (INR) and shall be non-negative integers. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.5.1a
+    title: "Business interruption cover and its waiting period"
+    section: "5.5.1(a)"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "a) Business interruption: Coverage is offered for business interruption loss (loss of net profits) as a result of a Cyber-attack that causes total or partial unavailability of the company’s computer system which are in direct control of the insured. Coverage for such loss of profit is subject to waiting periods (in hours or days) as agreed in the policy. Further, costs incurred to restore the Company’s Computer System to the same level of functionality which existed immediately prior to such event and the costs to retrieve or reinstall Data or Computer Programmes are also offered."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S2.2
-    title: Owning Entity Validation
-    section: "2.2"
-    full_text: "Every clause in an SME Cyber Insurance product shall be owned by the GeneralLiabilityLine entity type (policy line pattern GLLine) as defined in the Guidewire PolicyCenter product model hierarchy. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.5.1b
+    title: "Cyber extortion cover"
+    section: "5.5.1(b)"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "b) Cyber Extortion: Coverage is offered for Cyber Extortion Loss that the Insured incurs solely and directly as a result of a Cyber Extortion Threat. Such loss is triggered when a hacker breaks into computer system and threatens to commit a wicked act like damaging the data, introducing a virus, initiating a denial of service attack, or releasing confidential data unless the insured pays a specified sum. Coverage typically extends to any extortion payment that the company has to make and expenses incurred while responding to the demand."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S2.3
-    title: Existence and Category Validation
-    section: "2.3"
-    full_text: "Each clause shall declare a valid existence type from the set {Required, Suggested, Electable, Preset} and a category from {CyberFirstParty, CyberThirdParty, CyberExclusion, CyberRating} as appropriate for its function. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.5.2a
+    title: "Privacy and data breach liability, including response costs"
+    section: "5.5.2(a)"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "a) Privacy and Data Breach Liability including customer notification and credit monitoring costs: Coverage is offered for Damages and Defence Costs for a claim made against the Insured by any affected person or a client resulting from a privacy beach or a data breach for which the Insured is legally liable."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.1
-    title: Aggregate Limit Range
-    section: "3.1"
-    full_text: "The aggregate limit for any SME Cyber Insurance policy shall be not less than INR 5,00,000 (five lakh rupees) and shall not exceed INR 5,00,00,000 (five crore rupees). (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.5.2a-R
+    title: "Data breach response costs (notification, credit monitoring, data preservation)"
+    section: "5.5.2(a)"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "Insured could also incur substantial Response costs that may include (i) notification expenses towards the affected third parties and regulators in such an event (ii) credit monitoring services for a defined period - these include the monitoring of one's credit history for a specified period for to detect any suspicious activity or unauthorized charges. It also may provide special alerts when there are noticeable changes to one's credit history (iii) cost of identifying and preserving relevant Data on the Company’s Computer System"
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.2
-    title: Deductible Ranges
-    section: "3.2"
-    full_text: "Deductibles for individual coverages shall be set between 1% and 10% of the respective coverage limit to ensure adequate risk retention by the insured. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.5.2d
+    title: "Regulatory inquiry and insurable fines and penalties"
+    section: "5.5.2(d)"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "It covers the costs of dealing with privacy regulatory authorities / agencies (which oversee data breach laws and regulations), including • the costs of hiring lawyers to consult with regulators during investigations and • the payment of regulatory fines and penalties (insurable by law) that are levied against the insured (as a result of the breach)."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.3
-    title: Business Interruption Waiting Period
-    section: "3.3"
-    full_text: "The waiting period for Business Interruption coverage under cyber insurance shall be not less than 8 hours and not more than 72 hours from the time of the qualifying cyber event. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-5.8
+    title: "Major exclusions of cyber policies"
+    section: "5.8"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "5.8 MAJOR EXCLUSIONS: 5.8.1 Dishonest or Deliberate Wilful conduct Any fraudulent, dishonest activity, willful violation, breach of law done by the insured stands excluded from scope of coverage. This exclusion could be amended to include defence cost coverage for innocent insured and could also contain final adjudication clause. 5.8.1 Contingent Business Interruption This clause excludes any business interruption loss resulting from damage to the computer system of a service provider or a supplier on which the insured depends. 5.8.2 External Infrastructure Failure This clause excludes any claims arising due to any electrical or mechanical failure of infrastructure including any electrical power interruption, surge , brown out , black out , failure of telephone lines , data transmission lines , any satellite failure or any other telecom / network infrastructure which are not under the control of the insured / the outsource service provider. 5.8.3 Bodily Injury and Property Damage This clause excludes any actual or alleged bodily injury, sickness, mental anguish or emotional distress or disturbance, disease or death of any person howsoever caused or damage to or destruction of any tangible property, including loss of use thereof. As the control and operation of physical assets becomes increasingly managed by computers that are themselves interconnected, cyber-attack on automation / operational technologies could cause property damage and bodily injury related losses. Such losses are excluded from cyber policy as the Property and casualty policies are expected to address coverage for bodily injury and property damage. Insurers may consider extending the coverage by amending the definition of Bodily Injury to include mental anguish, mental injury, emotional distress resulting from a Privacy Breach or Media Wrongful Act. 5.8.4 War, terrorism, Invasion, riot, or insurrection This clause excludes coverage for loss from acts of war, terrorism, invasion, and/or insurrection. Since the repercussions of state-sponsored, political, and ideological cyber-attacks could be too vast and across industries, coverage for such events is excluded. For ex. NotPetya exposed a serious ambiguity in how insurance policies treat state-sponsored cyber incidents. Some property and casualty insurers declined to pay NotPetya-related claims, invoking their war exclusions. However, recently there is coverage available for “cyberterrorism” or “electronic terrorism”, but Cyber war still stays as a common exclusion. 5.8.5 Monetary and Trading losses The theft of money, trading losses or securities are typically excluded from a cyber-policy. 5.8.6 Prior act Cyber policies typically exclude any cyber incidents which existed prior to the insurance policy commencement."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.4
-    title: Extortion Sublimit
-    section: "3.4"
-    full_text: "The sublimit for Cyber Extortion or Ransomware coverage shall not exceed 50% of the policy aggregate limit to prevent disproportionate exposure to extortion-related claims. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: IRDAI-CYBER-2021-MW-EXT
+    title: "Model policy wording: conditions of the Cyber Extortion Cover"
+    section: "Annexure, Model Policy Wordings, cover iii"
+    kind: REGULATOR_GUIDANCE
+    issuer: "Insurance Regulatory and Development Authority of India (IRDAI)"
+    document: "Guidance Document on Product Structure for Cyber Insurance (8 Sep 2021)"
+    url: "https://irdai.gov.in/document-detail?documentId=976463"
+    full_text: "As a condition for payment under this cover the Insured shall: i. keep the terms and conditions of this Cyber Extortion Cover confidential, unless disclosure to law enforcement authorities is required; and ii. Take all reasonable steps to notify and cooperate with the appropriate law enforcement authorities; and iii. Take all reasonable steps (including the involvement of a security consultant with the Insurer’s prior written consent), to effectively mitigate the Cyber Extortion Loss."
+    effective_date: "2021-09-08"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.5
-    title: Turnover Cap
-    section: "3.5"
-    full_text: "SME Cyber Insurance products under this guideline are restricted to enterprises with annual turnover not exceeding INR 250 crore. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: CERT-IN-2022-DIR-ii
+    title: "Mandatory reporting of cyber incidents to CERT-In within 6 hours"
+    section: "Direction (ii)"
+    kind: REGULATION
+    issuer: "Indian Computer Emergency Response Team (CERT-In), MeitY"
+    document: "Directions under section 70B(6) of the IT Act, 2000, No. 20(3)/2022-CERT-In (28 Apr 2022)"
+    url: "https://www.cert-in.org.in/PDF/CERT-In_Directions_70B_28.04.2022.pdf"
+    full_text: "(ii) Any service provider, intermediary, data centre, body corporate and Government organisation shall mandatorily report cyber incidents as mentioned in Annexure I to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents."
+    effective_date: "2022-06-27"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.6
-    title: Rating Factor Range
-    section: "3.6"
-    full_text: "All rating factors applied in premium calculation for SME Cyber Insurance shall fall within the range of 0.50 to 3.00 inclusive. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: DPDP-2023-S8-6
+    title: "Intimation of a personal data breach to the Board and each affected Data Principal"
+    section: "8(6)"
+    kind: REGULATION
+    issuer: "Parliament of India"
+    document: "Digital Personal Data Protection Act, 2023 (No. 22 of 2023)"
+    url: "https://www.meity.gov.in/static/uploads/2024/06/2bf1f0e9f04e6fb4f8fef35e82c42aa5.pdf"
+    full_text: "(6) In the event of a personal data breach, the Data Fiduciary shall give the Board and each affected Data Principal, intimation of such breach in such form and manner as may be prescribed."
+    effective_date: "2027-05-13"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S3.7
-    title: Minimum Premium Floor
-    section: "3.7"
-    full_text: "A minimum premium floor of INR 10,000 shall apply to all SME Cyber Insurance policies regardless of coverage selections or factor adjustments. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: MSME-2025-SO1364E
+    title: "MSME classification: medium-enterprise limits raised (turnover up to ₹500 crore)"
+    section: "para 1(iii)"
+    kind: REGULATION
+    issuer: "Ministry of Micro, Small and Medium Enterprises"
+    document: "Notification S.O. 1364(E), 21 Mar 2025, amending S.O. 2119(E) of 26 Jun 2020 (MSMED Act, 2006)"
+    url: "https://ibclaw.in/msme-notification-no-so-1364e-dated-21-03-2025/"
+    full_text: "(iii) in clause (iii),- (a) for the words “fifty crore”, the words “one hundred twenty five crore”, shall be substituted; (b) for the words “two hundred and fifty crore”, the words “five hundred crore” shall be substituted;"
+    effective_date: "2025-04-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S4.1
-    title: Mandatory Coverages
-    section: "4.1"
-    full_text: "Every SME Cyber Insurance policy shall include at minimum Data Breach Response Coverage (SMCyberDataBreachCov) and Privacy Liability Coverage (SMCyberPrivacyLiabilityCov) as Required coverages. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-1
+    title: "Aggregate limit range"
+    section: "1"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The aggregate limit of indemnity of an SMCyber policy shall be not less than ₹5,00,000 and not more than ₹5,00,00,000."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S4.2
-    title: Mandatory Exclusions
-    section: "4.2"
-    full_text: "The following exclusions are mandatory for all SME Cyber Insurance policies: War and State-Sponsored Attacks (SMCyberWarExcl), Prior Known Incidents (SMCyberPriorKnownExcl), Intentional Acts (SMCyberIntentionalActsExcl), and Infrastructure Failure (SMCyberInfraFailureExcl). (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-2
+    title: "Cyber extortion sublimit"
+    section: "2"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The Cyber Extortion sublimit shall not exceed 50% of the aggregate limit of indemnity."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S4.3
-    title: Ransom Notification Condition
-    section: "4.3"
-    full_text: "Any coverage for cyber extortion or ransomware payments shall include a mandatory condition requiring the insured to notify law enforcement authorities before any payment is made. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-3
+    title: "Deductibles"
+    section: "3"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The deductible of each coverage shall be between 1% and 10% of that coverage’s limit, and always lower than the limit."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S4.4
-    title: Fines Insurability Condition
-    section: "4.4"
-    full_text: "Coverage for regulatory fines and penalties shall be provided only where insurable by law in the applicable jurisdiction. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-4
+    title: "Business interruption waiting period"
+    section: "4"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The business interruption waiting period shall be not less than 8 hours and not more than 72 hours."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S5.1
-    title: Citation Requirements
-    section: "5.1"
-    full_text: "Every clause in a compliant product configuration shall include at least one citation referencing the applicable regulatory source. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-5
+    title: "Rating factors"
+    section: "5"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "Each rating factor applied to the SMCyber base rate shall be between 0.5 and 3.0."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S5.2
-    title: Source Validity
-    section: "5.2"
-    full_text: "All citations must reference a valid regulatory source that is active on the proposed policy effective date and applicable to the jurisdiction of issuance. The cited text snippet must be a verbatim extract from the referenced source document. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-6
+    title: "Minimum premium"
+    section: "6"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The minimum premium of an SMCyber policy shall be not less than ₹10,000."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S6.1
-    title: Consistency of Limits
-    section: "6.1"
-    full_text: "The sum of all first-party coverage sublimits shall not exceed the policy aggregate limit. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-7
+    title: "First-party sublimits within the aggregate"
+    section: "7"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "The sum of the first-party coverage sublimits shall not exceed the aggregate limit of indemnity."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S6.2
-    title: Deductible Consistency
-    section: "6.2"
-    full_text: "The deductible amount for any individual coverage shall be strictly less than the coverage limit. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-8
+    title: "Exclusions and Required coverages"
+    section: "8"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "No exclusion shall remove a coverage that the product marks as Required."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S6.3
-    title: Exclusion Nullification
-    section: "6.3"
-    full_text: "No exclusion shall have the effect of completely nullifying a Required coverage within the same product configuration. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-UWG-2026-9
+    title: "Required coverages"
+    section: "9"
+    kind: UNDERWRITING_GUIDELINE
+    issuer: "SMCyber product team (ProvenPath demo insurer)"
+    document: "SMCyber Underwriting Guideline 2026 (internal product filing, not a regulation)"
+    url: ""
+    full_text: "Every SMCyber policy includes the Privacy and Data Breach Liability cover and the Data Breach Response cover as Required coverages."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: IRDAI-CYB-G-2024-S6.4
-    title: Duplicate Pattern Codes
-    section: "6.4"
-    full_text: "Each pattern code shall appear at most once within a product configuration to prevent duplicate clause definitions. (curated/illustrative, not legal text)"
-    effective_date: "2024-04-01"
+  - source_code: SMCYBER-PC-SPEC-1
+    title: "Pattern codes and money fields"
+    section: "1"
+    kind: TECHNICAL_SPEC
+    issuer: "ProvenPath"
+    document: "SMCyber PolicyCenter product-model specification (as installed on PolicyCenter 10.2.1)"
+    url: ""
+    full_text: "SMCyber clause pattern codes follow SMCyber[A-Za-z]+(Cov|Excl), and every monetary value is a whole, non-negative number of Indian Rupees."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
 
-  - source_code: CERT-IN-DIR-2022-6HR
-    title: CERT-In 6-Hour Reporting Direction
-    section: "70B(6)"
-    full_text: "All service providers, intermediaries, data centres, body corporate and Government organisations shall mandatorily report cyber incidents to CERT-In within 6 hours of noticing such incidents or being brought to notice about such incidents. (curated/illustrative, not legal text)"
-    effective_date: "2022-04-28"
+  - source_code: SMCYBER-PC-SPEC-2
+    title: "Owning entity"
+    section: "2"
+    kind: TECHNICAL_SPEC
+    issuer: "ProvenPath"
+    document: "SMCyber PolicyCenter product-model specification (as installed on PolicyCenter 10.2.1)"
+    url: ""
+    full_text: "Every SMCyber coverage and exclusion is owned by the GeneralLiabilityLine entity (policy line pattern GLLine) in the PolicyCenter product model."
+    effective_date: "2026-01-01"
     expiry_date: null
     jurisdiction: IN
+
+  - source_code: SMCYBER-PC-SPEC-3
+    title: "Existence and category"
+    section: "3"
+    kind: TECHNICAL_SPEC
+    issuer: "ProvenPath"
+    document: "SMCyber PolicyCenter product-model specification (as installed on PolicyCenter 10.2.1)"
+    url: ""
+    full_text: "Each clause declares an existence of Required, Suggested, Electable or Preset, and a category of CyberFirstParty, CyberThirdParty, CyberExclusion or CyberRating."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: SMCYBER-PC-SPEC-4
+    title: "Unique pattern codes"
+    section: "4"
+    kind: TECHNICAL_SPEC
+    issuer: "ProvenPath"
+    document: "SMCyber PolicyCenter product-model specification (as installed on PolicyCenter 10.2.1)"
+    url: ""
+    full_text: "A pattern code appears at most once in an SMCyber product."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: PP-AIGOV-2026-1
+    title: "Every clause is cited"
+    section: "1"
+    kind: GOVERNANCE
+    issuer: "ProvenPath"
+    document: "ProvenPath AI Governance Policy 2026 (internal)"
+    url: ""
+    full_text: "Every clause proposed by an AI planner cites at least one source."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: PP-AIGOV-2026-2
+    title: "Citations are verbatim"
+    section: "2"
+    kind: GOVERNANCE
+    issuer: "ProvenPath"
+    document: "ProvenPath AI Governance Policy 2026 (internal)"
+    url: ""
+    full_text: "A citation names a registered source and quotes it word for word; the source applies in India."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: PP-AIGOV-2026-3
+    title: "Cited sources are in force"
+    section: "3"
+    kind: GOVERNANCE
+    issuer: "ProvenPath"
+    document: "ProvenPath AI Governance Policy 2026 (internal)"
+    url: ""
+    full_text: "A cited source must be in force on the policy’s target effective date."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+
+  - source_code: PP-AIGOV-2026-4
+    title: "Prose is grounded"
+    section: "4"
+    kind: GOVERNANCE
+    issuer: "ProvenPath"
+    document: "ProvenPath AI Governance Policy 2026 (internal)"
+    url: ""
+    full_text: "Every number stated in the proposal’s summary matches a value the gate has verified."
+    effective_date: "2026-01-01"
+    expiry_date: null
+    jurisdiction: IN
+

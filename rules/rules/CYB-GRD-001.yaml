@@ -6,5 +6,5 @@ depends_on: ["CYB-TYPE-001"]
 logic:
   operator: FN
   name: "groundingCheck"
-source_code: IRDAI-CYB-G-2024-S5.1
+source_code: PP-AIGOV-2026-4
 error_template: "Number in summary not grounded in verified data"
